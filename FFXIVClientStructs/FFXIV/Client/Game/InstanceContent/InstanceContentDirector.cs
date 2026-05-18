@@ -7,8 +7,9 @@ namespace FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 //         Client::Game::Event::EventHandler
 [GenerateInterop(isInherited: true)]
 [Inherits<ContentDirector>]
+[VirtualTable("48 8D 05 ?? ?? ?? ?? B9 ?? ?? ?? ?? ?? ?? ?? 33 ED 48 8D 05", 3, 406)]
 [StructLayout(LayoutKind.Explicit, Size = 0x1F98)]
-public unsafe partial struct InstanceContentDirector {
+public partial struct InstanceContentDirector {
     [FieldOffset(0xD30 + 0x00), CExporterExcelBegin("InstanceContent")] public uint NewPlayerBonusGil;
     [FieldOffset(0xD30 + 0x04)] public uint NewPlayerBonusExp;
     [FieldOffset(0xD30 + 0x08)] public uint FinalBossExp;
@@ -103,5 +104,8 @@ public enum InstanceContentType : byte {
     UnrealTrial = 17,
     TripleTriad = 18,
     VariantDungeon = 19,
-    CriterionDungeon = 20
+    CriterionDungeon = 20,
+    AdvancedVariantDungeon = 21,
+    Unk22 = 22, // related to XBM
+    Unk23 = 23,
 }

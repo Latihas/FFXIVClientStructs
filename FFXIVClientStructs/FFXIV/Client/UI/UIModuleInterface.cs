@@ -123,6 +123,7 @@ public unsafe partial struct UIModuleInterface {
     // [VirtualFunction(126)] public partial ??? ShowContentIntroduction(???);
     // [VirtualFunction(127)] public partial ??? IsContentIntroductionInvisible(???);
     // [VirtualFunction(128)] public partial ??? HideContentIntroduction(???);
+    [VirtualFunction(130)] public partial bool IsUIReady(bool ignoreHudInitialized = false);
     [VirtualFunction(131)] public partial void ChangeUIMode(GameUIMode uiMode);
     [VirtualFunction(132)] public partial bool InContentsReplay();
     [VirtualFunction(139)] public partial void SetCursorVisibility(bool visible);
@@ -171,10 +172,10 @@ public unsafe partial struct UIModuleInterface {
     [VirtualFunction(216)] public partial void ShowTalkSubtitle(Utf8String* text, float duration);
     [VirtualFunction(217)] public partial void HideTalkSubtitle();
     [VirtualFunction(220)] public partial void ShowAdventureNotice(int index);
+    [VirtualFunction(222)] public partial int RotateLinkshellHistory(int offset);
     [VirtualFunction(223)] public partial void SetLinkshellCycle(int linkshellCycle);
-    [VirtualFunction(224)] public partial int RotateLinkshellHistory(int offset);
+    [VirtualFunction(224)] public partial int RotateCrossLinkshellHistory(int offset);
     [VirtualFunction(225)] public partial void SetCrossWorldLinkshellCycle(int crossWorldLinkshellCycle);
-    [VirtualFunction(226)] public partial int RotateCrossLinkshellHistory(int offset);
     // [VirtualFunction(242)] public partial ??? ShowRaceCountdownStart(???);
     // [VirtualFunction(243)] public partial ??? ShowRaceCountdownEnd_2(???);
 
