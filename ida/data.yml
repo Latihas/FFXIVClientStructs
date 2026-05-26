@@ -227,6 +227,7 @@ functions:
   0x1409AA6C0: ToObjStrId
   0x1409AA780: ToActStrId
   0x140C14D30: GenerateEquippedItemsChecksum # for Banners; unused
+  0x140C27800: HasReachedExpansionMaxLevel
   0x140E88EF0: IsExportedGatheringPointTimed  # static, value of ExportedGatheringPoint.GatheringPointType
   0x140FBD580: ConvertRawToMapPosX
   0x140FBD610: ConvertRawToMapPosY
@@ -4095,6 +4096,8 @@ classes:
       0x142081C70: ctor
       0x142081B80: ctor_From
       0x142081CA0: Finalizer
+    vfuncs:
+      0: Dtor
   Component::Excel::ExcelModuleInterface:
     vtbls:
       - ea: 0x14211C050
@@ -4115,6 +4118,9 @@ classes:
     funcs:
       0x14207E8A0: ctor
       0x14207FB20: ExcelSheetContainerFromData
+      0x14207FF50: GetLanguage
+      0x14207FFA0: GetSheetByIndex
+      0x14207FFC0: GetSheetByName
   Common::Component::Environment::AllocatorInterface:
     vtbls:
       - ea: 0x14216D4E0
@@ -4691,6 +4697,23 @@ classes:
         base: Common::Component::Excel::LinkList<Common::Component::Excel::ExcelSheet>
     funcs:
       0x14207B380: ctor
+      0x14207BB40: CopyFrom
+      0x14207CAE0: AddWaiter
+      0x14207D270: ClearAllocatedRows
+      0x14207D290: GetColumnIndex
+      0x14207DD00: GetAllocatedRowCount
+      0x14207DD20: GetStartColumn
+      0x14207DD30: GetSubRowByDescriptor
+      0x14207DE70: GetRowById
+      0x14207DFB0: GetColumnStringByDescriptor
+      0x14207E1C0: GetRowByDescriptor
+      0x14207E360: GetSheetName
+      0x14207E370: GetColumnOffset
+      0x14207E420: GetColumnIndex2
+      0x14207E430: GetColumnType
+      0x14207E450: GetColumnTypeLength
+      0x14207E460: GetWaiterCount
+      0x14207E7D0: RemoveWaiter
   Component::Excel::ExcelPage:
     funcs:
       0x1420828D0: ctor  # (ExcelPage* this, ExcelDataPagination* exhPageInfo, ExcelSheetContainer* pOwner)
@@ -4744,7 +4767,8 @@ classes:
       0x14207AB70: IsColumnRsv  # (ExcelRow* this, size_t nColumnIndex) -> bool
       0x14207A130: CalculateStringColumnHash  # static (char* pStringOffsetBytes)
       0x14207A470: ResolveStringColumnIndirection  # static (char* pStringOffsetBytes)
-      0x14207AAE0: GetFirstColumnAsString
+      0x14207AAE0: GetColumnString
+      0x14207AB60: HasData
   Component::Excel::ExcelRowDescriptor:
     # size 0x08+
     # 0x00: nRowId: int
@@ -11305,6 +11329,7 @@ classes:
         base: Client::Game::Character::ContainerInterface
     funcs:
       0x1408C85C0: CalculateFloatHeight
+      0x1408c9440: LoadTiltData
   Client::Game::Character::ReaperShroudContainer:
     vtbls:
       - ea: 0x14218C850
@@ -14323,6 +14348,32 @@ classes:
     vtbls:
       - ea: 0x1421ED560
         base: Component::GUI::AtkModuleInterface::AtkEventInterface
+  Client::UI::Agent::AgentContentsFinderInterface:
+    funcs:
+      0x140C29C90: ctor
+      0x140C29D20: CancelWaiters
+      0x140C29E10: SetAgent
+      0x140C29E20: LoadContentFinderCondition
+      0x140C2A520: LoadContentRoulette
+      0x140C2A090: LoadInstanceContent
+      0x140C2A7F0: GetReceivedRewardCount
+      0x140C2A870: GetMaxReceivedRewardCount
+  Client::UI::Agent::AgentContentsFinderReward:
+    funcs:
+      0x140ACCCA0: ctor
+      0x140F04A70: Finalize
+      0x140F04B80: Clear
+  Client::UI::Agent::AgentContentsFinderInterface::RewardsContainer:
+    funcs:
+      0x140ACFEB0: Finalize
+      0x140C5A5B0: ctor
+      0x140C5EE40: CopyFrom
+      0x140C607D0: Clear
+  Client::UI::Agent::AgentContentsFinderInterface::RewardsData:
+    funcs:
+      0x140ACCC30: ctor
+      0x140AD7B40: Clear
+      0x140FA61F0: CopyFrom
   Client::UI::Agent::AgentMap::MapMarkerStructSearchName:
     vtbls:
       - ea: 0x1421F0FC0
@@ -15113,6 +15164,7 @@ classes:
       0x140A76750: StartMission # no xrefs
       0x140A726D0: GetBasicMissions
       0x140A72950: GetProvisionalMissions
+      0x140A72D50: GetCriticalMissions # no xrefs
       0x140A73030: GetMissionLog
   Client::UI::Agent::AgentWKSMissionInfomation:
     vtbls:
@@ -15918,6 +15970,7 @@ classes:
   Client::Game::CallbackSheetWaiter<Client::Game::UI::QuestTodoList>:
     vtbls:
       - ea: 0x1421BA0A0
+        base: Common::Component::Excel::ExcelSheetWaiter
   Client::Game::Event::DailyQuestMap:
     funcs:
       0x140E05DC0: ctor

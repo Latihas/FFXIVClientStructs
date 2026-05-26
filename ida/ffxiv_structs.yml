@@ -3635,7 +3635,9 @@ enums:
   namespace: Client.LayoutEngine
   flags: False
   values:
+    "None": 0
     "BgPart": 1
+    "Attribute": 2
     "Light": 3
     "Vfx": 4
     "PositionMarker": 5
@@ -3643,24 +3645,61 @@ enums:
     "Sound": 7
     "EventNpc": 8
     "BattleNpc": 9
+    "RoutePath": 10
+    "Character": 11
     "Aetheryte": 12
     "EnvSpace": 13
     "Gathering": 14
     "HelperObject": 15
     "Treasure": 16
+    "Clip": 17
+    "ClipCtrlPoint": 18
+    "ClipCamera": 19
+    "ClipLight": 20
+    "ClipReserve00": 21
+    "ClipReserve01": 22
+    "ClipReserve02": 23
+    "ClipReserve03": 24
+    "ClipReserve04": 25
+    "ClipReserve05": 26
+    "ClipReserve06": 27
+    "ClipReserve07": 28
+    "ClipReserve08": 29
+    "ClipReserve09": 30
+    "ClipReserve10": 31
+    "ClipReserve11": 32
+    "ClipReserve12": 33
+    "ClipReserve13": 34
+    "ClipReserve14": 35
+    "CutAssetOnlySelectable": 36
+    "Player": 37
+    "Monster": 38
     "Weapon": 39
     "PopRange": 40
     "ExitRange": 41
+    "Lvb": 42
     "MapRange": 43
     "NaviMeshRange": 44
     "EventObject": 45
+    "DemiHuman": 46
     "EnvLocation": 47
+    "ControlPoint": 48
     "EventRange": 49
+    "RestBonusRange": 50
     "QuestMarker": 51
     "Timeline": 52
+    "ObjectBehaviorSet": 53
+    "Movie": 54
+    "ScenarioExd": 55
+    "ScenarioText": 56
     "CollisionBox": 57
     "DoorRange": 58
     "LineVfx": 59
+    "SoundEnvSet": 60
+    "CutActionTimeline": 61
+    "CharaScene": 62
+    "CutAction": 63
+    "EquipPreset": 64
     "ClientPath": 65
     "ServerPath": 66
     "GimmickRange": 67
@@ -3669,14 +3708,27 @@ enums:
     "ClickableRange": 70
     "PrefetchRange": 71
     "FateRange": 72
+    "PartyMember": 73
+    "KeepRange": 74
     "SphereCastRange": 75
     "IndoorObject": 76
     "OutdoorObject": 77
+    "EditGroup": 78
+    "StableChocobo": 79
+    "Unk80": 80
+    "Unk81": 81
+    "Unk82": 82
     "Decal": 83
+    "Unk84": 84
+    "Unk85": 85
     "ColliderLayer7": 86
     "ColliderLayer8": 87
     "ColliderLayer9": 88
     "ColliderLayer10": 89
+    "Culling": 90
+    "Unk91": 91
+    "Unk92": 92
+    "Unk93": 93
 - type: Client::LayoutEngine::FileLayerGroupInstanceBgPart::Collider
   name: Collider
   underlying: int
@@ -13387,7 +13439,13 @@ structs:
   namespace: Client.Game.UI
   union: False
   size: 96
-  fields: []
+  fields:
+  - type: Common::Component::Excel::ExcelSheet*
+    name: GuildOrderSheet
+    offset: 80
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: GuildOrderSheetWaiter
+    offset: 88
   virtual_functions: []
   member_functions: []
 - type: Client::Game::UI::HateInfo
@@ -14084,54 +14142,24 @@ structs:
   fields: []
   virtual_functions: []
   member_functions: []
-- type: Client::Game::WKS::WKSManager::WKSState
-  name: WKSState
+- type: Client::Game::WKS::WKSManager::WKSMissionState
+  name: WKSMissionState
   namespace: Client.Game.WKS
   union: False
-  size: 4232
+  size: 12
   fields:
   - type: unsigned __int16
-    name: DevGrade
+    name: MissionUnitId
+    offset: 0
+  - type: unsigned int
+    name: MissionFlag
+    offset: 4
+  - type: unsigned __int16
+    name: Unk8
+    offset: 8
+  - type: byte
+    name: Condition
     offset: 10
-  - type: unsigned __int16
-    name: CurrentFateControlRowId
-    offset: 16
-  - type: unsigned __int16
-    name: CurrentFateId
-    offset: 18
-  - type: unsigned __int16
-    name: CurrentMissionUnitRowId
-    offset: 3632
-  - type: unsigned int
-    name: CurrentScore
-    offset: 3644
-  - type: Client::Game::WKS::WKSManager::MissionRank
-    name: CurrentRank
-    offset: 3648
-  - type: unsigned __int16
-    name: CollectedTotal
-    offset: 3654
-  - type: byte
-    name: CollectedIndividual
-    offset: 3656
-  - type: unsigned int
-    name: FishingBait
-    offset: 3700
-  - type: byte
-    name: MissionCompletionFlags
-    offset: 3713
-    size: 213
-    is_string: False
-  - type: byte
-    name: MissionGoldFlags
-    offset: 3926
-    size: 213
-    is_string: False
-  - type: int
-    name: Scores
-    offset: 4140
-    size: 11
-    is_string: False
   member_functions: []
 - type: Client::Game::WKS::WKSMechaEventStageHandlerBase
   name: WKSMechaEventStageHandlerBase
@@ -19407,6 +19435,43 @@ structs:
     name: BubbleImageNode
     offset: 48
   member_functions: []
+- type: Client::UI::AddonMiragePrismPrismBox::ItemSlot
+  name: ItemSlot
+  namespace: Client.UI
+  union: False
+  size: 80
+  fields:
+  - type: Component::GUI::AtkComponentButton*
+    name: Button
+    offset: 0
+  - type: Component::GUI::AtkImageNode*
+    name: SlotIcon
+    offset: 8
+  - type: Component::GUI::AtkResNode*
+    name: Dye1Res
+    offset: 16
+  - type: Component::GUI::AtkImageNode*
+    name: Dye1Image
+    offset: 24
+  - type: Component::GUI::AtkResNode*
+    name: Dye2Res
+    offset: 32
+  - type: Component::GUI::AtkImageNode*
+    name: Dye2Image
+    offset: 40
+  - type: Component::GUI::AtkResNode*
+    name: SlotRes
+    offset: 48
+  - type: Component::GUI::AtkResNode*
+    name: OutfitGlamour
+    offset: 56
+  - type: Component::GUI::AtkResNode*
+    name: OutfitItemAmountRes
+    offset: 64
+  - type: Component::GUI::AtkTextNode*
+    name: OutfitItemAmountResText
+    offset: 72
+  member_functions: []
 - type: Client::UI::AddonNamePlate::BakeData
   name: BakeData
   namespace: Client.UI
@@ -19957,13 +20022,6 @@ structs:
     offset: 6
     size: 5
     is_string: False
-  member_functions: []
-- type: Client::UI::Agent::AgentContentsFinderInterface::UnkItemsSub
-  name: UnkItemsSub
-  namespace: Client.UI.Agent
-  union: False
-  size: 1992
-  fields: []
   member_functions: []
 - type: Client::UI::Agent::AgentCraftActionSimulator::EfficiencyCalculation
   name: EfficiencyCalculation
@@ -21139,6 +21197,30 @@ structs:
     name: Unk2D
     offset: 45
   member_functions: []
+- type: Client::UI::Agent::AgentShop::ShopRetainerBuybackItem
+  name: ShopRetainerBuybackItem
+  namespace: Client.UI.Agent
+  union: False
+  size: 48
+  fields:
+  - type: unsigned int
+    name: ItemId
+    offset: 0
+  - type: unsigned int
+    name: Quantity
+    offset: 4
+  - type: unsigned int
+    name: Price
+    offset: 20
+  - type: Client::Game::InventoryItem::ItemFlags
+    name: Flags
+    offset: 30
+  - type: unsigned __int16
+    name: Materia
+    offset: 34
+    size: 5
+    is_string: False
+  member_functions: []
 - type: Client::UI::Agent::AgentTelepotTownData
   name: AgentTelepotTownData
   namespace: Client.UI.Agent
@@ -21231,6 +21313,9 @@ structs:
   - type: byte
     name: MissionGroup
     offset: 24
+  - type: byte
+    name: ClassJobIndex
+    offset: 25
   member_functions: []
 - type: Client::UI::Agent::AgentWKSMissionInfomation::MissionInfo
   name: MissionInfo
@@ -21241,6 +21326,9 @@ structs:
   - type: __int64
     name: ServerTime
     offset: 0
+  - type: unsigned int
+    name: AddonId
+    offset: 8
   - type: unsigned int
     name: CurrentMissionUnitId
     offset: 12
@@ -27591,6 +27679,7 @@ structs:
   name: ColumnInfo
   namespace: Common.Component.Excel
   union: False
+  size: 6
   fields:
   - type: unsigned __int16
     name: Type
@@ -27608,7 +27697,15 @@ structs:
   union: False
   size: 48
   fields: []
-  virtual_functions: []
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Common::Component::Excel::ExcelSheetWaiter*
+    parameters:
+    - type: Common::Component::Excel::ExcelSheetWaiter*
+      name: this
+    - type: byte
+      name: freeFlags
   member_functions: []
 - type: Common::Component::Excel::LinkList
   name: LinkList
@@ -28259,6 +28356,9 @@ structs:
   - type: __int64
     name: Data
     offset: 0
+  - type: Common::Component::Excel::ExcelSheet*
+    name: Sheet
+    offset: 8
   member_functions:
   - signature: E8 ?? ?? ?? ?? 0F BF 08
     return_type: __int64
@@ -28278,10 +28378,12 @@ structs:
       name: columnIndex
   - signature: E8 ?? ?? ?? ?? 33 FF 33 C9
     return_type: char*
-    name: GetFirstColumnAsString
+    name: GetColumnString
     parameters:
     - type: Component::Excel::ExcelRow*
       name: this
+    - type: unsigned int
+      name: columnIndex
   static_member_functions:
   - signature: E8 ?? ?? ?? ?? 33 C9 81 FB
     return_type: __int64
@@ -32841,6 +32943,21 @@ structs:
     name: End
     offset: 16
   member_functions: []
+- type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
+  name: StdVector`1
+  namespace: ''
+  union: False
+  fields:
+  - type: Client::Game::WKS::WKSManager::WKSMissionState*
+    name: First
+    offset: 0
+  - type: Client::Game::WKS::WKSManager::WKSMissionState*
+    name: Last
+    offset: 8
+  - type: Client::Game::WKS::WKSManager::WKSMissionState*
+    name: End
+    offset: 16
+  member_functions: []
 - type: StdVector<Client::Game::WKS::WKSMechaEventMapMarker*>
   name: StdVector`1
   namespace: ''
@@ -34953,20 +35070,26 @@ structs:
   - type: int
     name: MountTiltSetupState2
     offset: 56
-  - type: byte
-    name: TiltParam1Type
+  - type: float
+    name: GroundTiltAngle
     offset: 64
   - type: float
-    name: TiltParam1Value
+    name: GroundTiltSpeed
     offset: 68
-  - type: byte
-    name: TiltParam2Type
-    offset: 72
   - type: float
-    name: TiltParam2Value
-    offset: 76
+    name: FlightTiltAngle
+    offset: 80
+  - type: float
+    name: FlightTiltSpeed
+    offset: 84
   virtual_functions: []
-  member_functions: []
+  member_functions:
+  - signature: 48 89 5C 24 ?? 55 48 83 EC ?? C6 41
+    return_type: void
+    name: LoadTiltData
+    parameters:
+    - type: Client::Game::Character::EffectContainer*
+      name: this
 - type: Client::Game::Character::ModelContainer
   name: ModelContainer
   namespace: Client.Game.Character
@@ -39900,7 +40023,15 @@ structs:
     name: ExcelSheetWaiter
     offset: 0
     base: true
-  virtual_functions: []
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Common::Component::Excel::ExcelSheetWaiter*
+    parameters:
+    - type: Client::Game::ZoneSharedGroupManager*
+      name: this
+    - type: byte
+      name: freeFlags
   member_functions:
   - signature: 33 C0 4C 8B C9 38 41 32
     return_type: void
@@ -42254,6 +42385,31 @@ structs:
   - type: Component::GUI::AtkTextNode*
     name: HeaderText
     offset: 328
+  member_functions: []
+- type: Client::UI::AddonCabinet::ItemSlot
+  name: ItemSlot
+  namespace: Client.UI
+  union: False
+  size: 128
+  fields:
+  - type: Client::System::String::Utf8String
+    name: Name
+    offset: 0
+  - type: unsigned int
+    name: Unk68
+    offset: 104
+  - type: unsigned int
+    name: InventorySlotIndex
+    offset: 108
+  - type: unsigned int
+    name: InventoryContainerType
+    offset: 112
+  - type: unsigned int
+    name: ItemsArrayIndex
+    offset: 116
+  - type: float
+    name: ConditionNormalized
+    offset: 120
   member_functions: []
 - type: Client::UI::AddonCharaSelectWorldServer::WorldEntry
   name: WorldEntry
@@ -47731,6 +47887,9 @@ structs:
     offset: 130
     size: 2
     is_string: False
+  - type: byte
+    name: Unk84
+    offset: 132
   - type: byte
     name: EquipSlotCategory
     offset: 133
@@ -54316,6 +54475,9 @@ structs:
     name: ExcelResourceListener
     offset: 0
     base: true
+  - type: Common::Component::Excel::ExcelLanguage
+    name: Language
+    offset: 44
   - type: Common::Component::Excel::ExcelSheet**
     name: SheetsByIndex
     offset: 1960
@@ -60787,6 +60949,28 @@ structs:
     name: IsFreeAetheryte
     offset: 28
   member_functions: []
+- type: Client::Game::WKS::WKSManager::WKSJobState
+  name: WKSJobState
+  namespace: Client.Game.WKS
+  union: False
+  size: 328
+  fields:
+  - type: Client::Game::WKS::WKSManager::WKSMissionState
+    name: ExtraBasicMission
+    offset: 176
+  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
+    name: SequentialMissions
+    offset: 192
+  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
+    name: ProvisionalMissions
+    offset: 216
+  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
+    name: CriticalMissions
+    offset: 240
+  - type: unsigned int
+    name: CriticalMissionData
+    offset: 264
+  member_functions: []
 - type: Client::Graphics::Kernel::PVShader
   name: PVShader
   namespace: Client.Graphics.Kernel
@@ -65037,139 +65221,6 @@ structs:
     - type: byte
       name: classJobId
   member_functions: []
-- type: Client::UI::Agent::AgentCabinet
-  name: AgentCabinet
-  namespace: Client.UI.Agent
-  union: False
-  size: 19160
-  fields:
-  - type: Client::UI::Agent::AgentInterface
-    name: AgentInterface
-    offset: 0
-    base: true
-  - type: unsigned int
-    name: ConfirmationAddonId
-    offset: 48
-  - type: unsigned int
-    name: SelectedIndex
-    offset: 52
-  - type: Client::UI::Agent::AgentCabinet::CabinetItem*
-    name: Items
-    offset: 19120
-  virtual_functions:
-  - name: ReceiveEvent
-    offset: 0
-    return_type: Component::GUI::AtkValue*
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: Component::GUI::AtkValue*
-      name: returnValue
-    - type: Component::GUI::AtkValue*
-      name: values
-    - type: unsigned int
-      name: valueCount
-    - type: unsigned __int64
-      name: eventKind
-  - name: ReceiveEventWithResult
-    offset: 8
-    return_type: Component::GUI::AtkValue*
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: Component::GUI::AtkValue*
-      name: returnValue
-    - type: Component::GUI::AtkValue*
-      name: values
-    - type: unsigned int
-      name: valueCount
-    - type: unsigned __int64
-      name: eventKind
-  - name: Dtor
-    offset: 16
-    return_type: Client::UI::Agent::AgentInterface*
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: byte
-      name: freeFlags
-  - name: Show
-    offset: 24
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-  - name: ShowFromLua
-    offset: 32
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: int
-      name: id
-    - type: int*
-      name: args
-    - type: __int64
-      name: argCount
-  - name: Hide
-    offset: 40
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-  - name: IsAgentActive
-    offset: 48
-    return_type: char
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-  - name: Update
-    offset: 56
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: unsigned int
-      name: frameCount
-  - name: IsActivatable
-    offset: 64
-    return_type: char
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-  - name: GetAddonId
-    offset: 72
-    return_type: unsigned int
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-  - name: OnGameEvent
-    offset: 80
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: Client::UI::Agent::AgentGameEvent
-      name: gameEvent
-  - name: OnLevelChange
-    offset: 88
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: byte
-      name: classJobId
-    - type: unsigned __int16
-      name: level
-  - name: OnClassJobChange
-    offset: 96
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentCabinet*
-      name: this
-    - type: byte
-      name: classJobId
-  member_functions: []
 - type: Client::UI::Agent::AgentCabinetWithdraw
   name: AgentCabinetWithdraw
   namespace: Client.UI.Agent
@@ -65772,43 +65823,6 @@ structs:
       name: this
     - type: byte
       name: classJobId
-  member_functions: []
-- type: Client::UI::Agent::AgentContentsFinderInterface
-  name: AgentContentsFinderInterface
-  namespace: Client.UI.Agent
-  union: False
-  size: 2176
-  fields:
-  - type: Client::UI::Agent::AgentContentsFinder*
-    name: AgentContentsFinder
-    offset: 0
-  - type: Client::System::String::Utf8String
-    name: Description
-    offset: 16
-  - type: Client::UI::Agent::AgentContentsFinderInterface::UnkItemsSub
-    name: UnkSub
-    offset: 120
-  - type: Common::Component::Excel::ExcelSheet*
-    name: InstanceContentSheet
-    offset: 2112
-  - type: Common::Component::Excel::ExcelSheet*
-    name: ContentFinderConditionTransientSheet
-    offset: 2120
-  - type: Common::Component::Excel::ExcelSheet*
-    name: InstanceContentRewardItemSheet
-    offset: 2128
-  - type: __int64
-    name: ExcelSheetWaiterInstanceContent
-    offset: 2136
-  - type: __int64
-    name: ExcelSheetWaiterContentFinderConditionTransient
-    offset: 2144
-  - type: __int64
-    name: ExcelSheetWaiterInstanceContentRewardItem
-    offset: 2152
-  - type: int
-    name: SelectedDutyId
-    offset: 2160
   member_functions: []
 - type: Client::UI::Agent::AgentContentsTimer
   name: AgentContentsTimer
@@ -72146,7 +72160,7 @@ structs:
   - type: Client::UI::Agent::AgentRaidFinder::TabData::TabEntryData
     name: Entries
     offset: 0
-    size: 5
+    size: 8
     is_string: False
   - type: int
     name: EntryCount
@@ -73003,6 +73017,9 @@ structs:
   - type: Client::UI::Agent::AgentShop::ShopItem*
     name: ItemCost
     offset: 192
+  - type: Client::UI::Agent::AgentShop::ShopRetainerBuybackItem*
+    name: ItemRetainerBuyback
+    offset: 200
   - type: int
     name: ItemReceiveCount
     offset: 208
@@ -73668,6 +73685,133 @@ structs:
       name: valueCount
     - type: unsigned int
       name: code
+- type: Client::UI::Agent::AgentVVDFinder
+  name: AgentVVDFinder
+  namespace: Client.UI.Agent
+  union: False
+  size: 48
+  fields:
+  - type: Client::UI::Agent::AgentInterface
+    name: AgentInterface
+    offset: 0
+    base: true
+  - type: Client::UI::Agent::AgentVVDFinder::VVDFinderData*
+    name: Data
+    offset: 40
+  virtual_functions:
+  - name: ReceiveEvent
+    offset: 0
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: ReceiveEventWithResult
+    offset: 8
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: Dtor
+    offset: 16
+    return_type: Client::UI::Agent::AgentInterface*
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: Show
+    offset: 24
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+  - name: ShowFromLua
+    offset: 32
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: int
+      name: id
+    - type: int*
+      name: args
+    - type: __int64
+      name: argCount
+  - name: Hide
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+  - name: IsAgentActive
+    offset: 48
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+  - name: Update
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: unsigned int
+      name: frameCount
+  - name: IsActivatable
+    offset: 64
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+  - name: GetAddonId
+    offset: 72
+    return_type: unsigned int
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+  - name: OnGameEvent
+    offset: 80
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: Client::UI::Agent::AgentGameEvent
+      name: gameEvent
+  - name: OnLevelChange
+    offset: 88
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: byte
+      name: classJobId
+    - type: unsigned __int16
+      name: level
+  - name: OnClassJobChange
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentVVDFinder*
+      name: this
+    - type: byte
+      name: classJobId
+  member_functions: []
 - type: Client::UI::Agent::AgentWKSAnnounce
   name: AgentWKSAnnounce
   namespace: Client.UI.Agent
@@ -73937,6 +74081,12 @@ structs:
   - type: byte
     name: SelectedFilterIndex
     offset: 3
+  - type: byte
+    name: StartStep
+    offset: 4
+  - type: char
+    name: IsMissionLog
+    offset: 5
   - type: unsigned int
     name: SelectedMissionUnitId
     offset: 8
@@ -73971,8 +74121,14 @@ structs:
     name: MissionList
     offset: 248
   - type: byte
+    name: MissionLogTabIndex
+    offset: 277
+  - type: byte
     name: UpdateFlags
     offset: 280
+  - type: byte
+    name: ControlFlags
+    offset: 281
   member_functions: []
 - type: Client::UI::Agent::AgentWeeklyBingo
   name: AgentWeeklyBingo
@@ -77940,20 +78096,61 @@ structs:
   - type: unsigned int
     name: DataOffset
     offset: 64
+  - type: unsigned int
+    name: RowLength
+    offset: 68
+  - type: unsigned int
+    name: CachedAllocatedRowCount
+    offset: 168
+  - type: Component::Excel::IExcelPageRowResolver*
+    name: RowResolver
+    offset: 176
   - type: Common::Component::Excel::ExcelVariant
     name: Variant
     offset: 208
   - type: unsigned __int16
     name: ColumnCount
     offset: 212
+  - type: __int16
+    name: StartColumn
+    offset: 214
   - type: unsigned __int16
     name: Version
     offset: 216
   - type: unsigned __int16
     name: SheetIndex
     offset: 218
+  - type: unsigned int
+    name: WaiterCount
+    offset: 248
   virtual_functions: []
-  member_functions: []
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 8B D0 BD
+    return_type: unsigned int
+    name: GetAllocatedRowCount
+    parameters:
+    - type: Common::Component::Excel::ExcelSheet*
+      name: this
+  - signature: E8 ?? ?? ?? ?? 48 8B 4F ?? 49 89 44 0E
+    return_type: Component::Excel::IExcelRowWrapper*
+    name: GetRowByDescriptor
+    parameters:
+    - type: Common::Component::Excel::ExcelSheet*
+      name: this
+    - type: Component::Excel::ExcelRowDescriptor*
+      name: descriptor
+    - type: unsigned int*
+      name: outErrorCode
+  - signature: E8 ?? ?? ?? ?? 8B D3 48 8B F8
+    return_type: Component::Excel::IExcelRowWrapper*
+    name: GetRowById
+    parameters:
+    - type: Common::Component::Excel::ExcelSheet*
+      name: this
+    - type: unsigned int
+      name: rowId
+    - type: unsigned int*
+      name: outErrorCode
 - type: Common::Configuration::DevConfig
   name: DevConfig
   namespace: Common.Configuration
@@ -81380,77 +81577,84 @@ structs:
     - type: Client::Game::WKS::WKSContentInventoryContainer*
       name: this
   member_functions: []
-- type: Client::Game::WKS::WKSManager
-  name: WKSManager
+- type: Client::Game::WKS::WKSManager::WKSState
+  name: WKSState
   namespace: Client.Game.WKS
   union: False
-  size: 4688
+  size: 4232
   fields:
-  - type: Client::Game::Character::CharacterManagerInterface
-    name: CharacterManagerInterface
+  - type: byte
+    name: Unk00
     offset: 0
-    base: true
+  - type: byte
+    name: Unk01
+    offset: 1
+  - type: int
+    name: ProjectState
+    offset: 4
   - type: unsigned __int16
-    name: TerritoryId
+    name: Unk08
+    offset: 8
+  - type: unsigned __int16
+    name: DevGrade
+    offset: 10
+  - type: int
+    name: ProjectTimestamp
+    offset: 12
+  - type: unsigned __int16
+    name: CurrentFateControlRowId
+    offset: 16
+  - type: unsigned __int16
+    name: CurrentFateId
+    offset: 18
+  - type: byte
+    name: Unk14
+    offset: 20
+  - type: byte
+    name: CurrentPlanetIndex
+    offset: 21
+  - type: byte
+    name: LatestPlanetIndex
+    offset: 22
+  - type: Client::Game::WKS::WKSManager::WKSJobState
+    name: JobStates
     offset: 24
-  - type: Client::Game::WKS::WKSManager::WKSState
-    name: State
-    offset: 80
-  - type: __int64
-    name: UnkStruct10F8
-    offset: 4344
-  - type: __int64
-    name: UnkStruct1100
-    offset: 4352
-  - type: Client::Game::WKS::WKSMechaEventModule*
-    name: MechaEventModule
-    offset: 4360
-  - type: __int64
-    name: UnkStruct1110
-    offset: 4368
-  - type: __int64
-    name: UnkStruct1118
-    offset: 4376
-  - type: __int64
-    name: EmergencyInfoModule
-    offset: 4384
-  - type: __int64
-    name: UnkStruct1128
-    offset: 4392
-  - type: __int64
-    name: UnkStruct1130
-    offset: 4400
-  - type: Client::Game::WKS::WKSMissionModule*
-    name: MissionModule
-    offset: 4408
-  - type: Client::Game::WKS::WKSResearchModule*
-    name: ResearchModule
-    offset: 4416
-  - type: __int64
-    name: UnkStruct1148
-    offset: 4424
-  - type: __int64
-    name: UnkStruct1150
-    offset: 4432
-  - type: StdVector<Client::Game::WKS::WKSModuleBase*>
-    name: Modules
-    offset: 4440
-  virtual_functions:
-  - name: Dtor
-    offset: 40
-    return_type: Client::Game::Character::CharacterManagerInterface*
-    parameters:
-    - type: Client::Game::WKS::WKSManager*
-      name: this
-    - type: byte
-      name: freeFlags
+    size: 11
+    is_string: False
+  - type: unsigned __int16
+    name: CurrentMissionUnitRowId
+    offset: 3632
+  - type: unsigned int
+    name: CurrentScore
+    offset: 3644
+  - type: Client::Game::WKS::WKSManager::MissionRank
+    name: CurrentRank
+    offset: 3648
+  - type: unsigned __int16
+    name: CollectedTotal
+    offset: 3654
+  - type: byte
+    name: CollectedIndividual
+    offset: 3656
+  - type: unsigned int
+    name: FishingBait
+    offset: 3700
+  - type: byte
+    name: MissionCompletionFlags
+    offset: 3713
+    size: 213
+    is_string: False
+  - type: byte
+    name: MissionGoldFlags
+    offset: 3926
+    size: 213
+    is_string: False
+  - type: int
+    name: Scores
+    offset: 4140
+    size: 11
+    is_string: False
   member_functions: []
-  static_members:
-  - signature: 48 89 05 ?? ?? ?? ?? 48 8B F8
-    relative_follow_offsets:
-    - 3
-    is_pointer: True
-    return_type: Client::Game::WKS::WKSManager
 - type: Client::Game::WKS::WKSMechaEventMapMarker
   name: WKSMechaEventMapMarker
   namespace: Client.Game.WKS
@@ -87947,9 +88151,15 @@ structs:
   - type: byte
     name: SelectedTab
     offset: 52
+  - type: char
+    name: HasSavedTab
+    offset: 53
   - type: Client::System::String::Utf8String
     name: MapTitle
     offset: 56
+  - type: char
+    name: BypassItemLevelCheck
+    offset: 160
   virtual_functions:
   - name: ReceiveEvent
     offset: 0
@@ -88091,6 +88301,14 @@ structs:
   - signature: E8 ?? ?? ?? ?? EB ?? 48 81 C2
     return_type: char
     name: GetProvisionalMissions
+    parameters:
+    - type: Client::UI::Agent::AgentWKSMission*
+      name: this
+    - type: StdVector<Client::UI::Agent::AgentWKSMission::MissionEntry>*
+      name: list
+  - signature: 48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 41 54 41 55 41 56 41 57 48 83 EC ?? 48 8B EA E8
+    return_type: char
+    name: GetCriticalMissions
     parameters:
     - type: Client::UI::Agent::AgentWKSMission*
       name: this
@@ -88451,6 +88669,15 @@ structs:
   union: False
   size: 1194496
   fields:
+  - type: byte
+    name: Unk00
+    offset: 0
+  - type: char
+    name: IsAsyncLoadComplete
+    offset: 1
+  - type: byte
+    name: PendingTabIndex
+    offset: 2
   - type: Client::UI::Agent::PrismBoxItem
     name: PrismBoxItems
     offset: 8
@@ -88470,9 +88697,36 @@ structs:
   - type: int
     name: SelectedPageIndex
     offset: 1158756
+  - type: unsigned int
+    name: Unk11AE68
+    offset: 1158760
   - type: int
     name: UsedSlots
     offset: 1158764
+  - type: unsigned int
+    name: ItemCount
+    offset: 1158768
+  - type: unsigned int
+    name: FilterSettingsAddonId
+    offset: 1158772
+  - type: char
+    name: IsPopulatingList
+    offset: 1158776
+  - type: byte
+    name: Unk11AE7B
+    offset: 1158779
+  - type: char
+    name: IsAddonReady
+    offset: 1158780
+  - type: byte
+    name: Unk11AE7D
+    offset: 1158781
+  - type: byte
+    name: Unk11AE7E
+    offset: 1158782
+  - type: char
+    name: IsPositionSaved
+    offset: 1158783
   - type: int
     name: CrystallizeCategory
     offset: 1158788
@@ -88490,6 +88744,15 @@ structs:
   - type: Client::UI::Agent::PrismBoxCrystallizeItem
     name: CrystallizeSelectedItem
     offset: 1162720
+  - type: unsigned int
+    name: PendingState
+    offset: 1194144
+  - type: unsigned int
+    name: PendingStateStep
+    offset: 1194148
+  - type: unsigned int
+    name: LastProcessedStep
+    offset: 1194152
   - type: byte
     name: CrystallizeFilterFlags
     offset: 1194156
@@ -88506,14 +88769,23 @@ structs:
     name: FilterLevel
     offset: 1194176
   - type: byte
+    name: Unk1238C1
+    offset: 1194177
+  - type: byte
     name: FilterSex
     offset: 1194178
+  - type: byte
+    name: FilterGlamour
+    offset: 1194179
   - type: Client::System::String::Utf8String
     name: FilterString
     offset: 1194184
   - type: Client::System::String::Utf8String
-    name: SearchString
+    name: FilterString2
     offset: 1194288
+  - type: Client::System::String::Utf8String
+    name: SearchString
+    offset: 1194392
   member_functions: []
 - type: Client::UI::Info::InfoProxyCrossRealm
   name: InfoProxyCrossRealm
@@ -93427,7 +93699,15 @@ structs:
   - type: Client::Game::InstanceContent::DynamicEventContainer*
     name: EventContainer
     offset: 448
-  virtual_functions: []
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Common::Component::Excel::ExcelSheetWaiter*
+    parameters:
+    - type: Client::Game::InstanceContent::DynamicEvent*
+      name: this
+    - type: byte
+      name: freeFlags
   member_functions:
   - signature: E8 ?? ?? ?? ?? 84 C0 74 ?? 44 0F B7 03
     return_type: char
@@ -96947,6 +97227,159 @@ structs:
     name: CharaViewPortraitPtr
     offset: 264
   member_functions: []
+- type: Client::UI::Agent::AgentCabinet
+  name: AgentCabinet
+  namespace: Client.UI.Agent
+  union: False
+  size: 19160
+  fields:
+  - type: Client::UI::Agent::AgentInterface
+    name: AgentInterface
+    offset: 0
+    base: true
+  - type: unsigned int
+    name: ConfirmationAddonId
+    offset: 48
+  - type: unsigned int
+    name: SelectedIndex
+    offset: 52
+  - type: unsigned int
+    name: OpenMode
+    offset: 56
+  - type: unsigned int
+    name: SelectedItemId
+    offset: 64
+  - type: byte
+    name: SelectedCategoryIndex
+    offset: 73
+  - type: char
+    name: PendingUpdate
+    offset: 74
+  - type: Client::UI::RaptureAtkModule::ItemCache
+    name: ItemCaches
+    offset: 80
+    size: 140
+    is_string: False
+  - type: Client::UI::Agent::AgentCabinet::CabinetItem*
+    name: Items
+    offset: 19120
+  - type: unsigned int
+    name: ItemCount
+    offset: 19128
+  virtual_functions:
+  - name: ReceiveEvent
+    offset: 0
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: ReceiveEventWithResult
+    offset: 8
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: Dtor
+    offset: 16
+    return_type: Client::UI::Agent::AgentInterface*
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: Show
+    offset: 24
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+  - name: ShowFromLua
+    offset: 32
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: int
+      name: id
+    - type: int*
+      name: args
+    - type: __int64
+      name: argCount
+  - name: Hide
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+  - name: IsAgentActive
+    offset: 48
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+  - name: Update
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: unsigned int
+      name: frameCount
+  - name: IsActivatable
+    offset: 64
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+  - name: GetAddonId
+    offset: 72
+    return_type: unsigned int
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+  - name: OnGameEvent
+    offset: 80
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: Client::UI::Agent::AgentGameEvent
+      name: gameEvent
+  - name: OnLevelChange
+    offset: 88
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: byte
+      name: classJobId
+    - type: unsigned __int16
+      name: level
+  - name: OnClassJobChange
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentCabinet*
+      name: this
+    - type: byte
+      name: classJobId
+  member_functions: []
 - type: Client::UI::Agent::AgentChatLog::LinkedInventoryItem
   name: LinkedInventoryItem
   namespace: Client.UI.Agent
@@ -97124,6 +97557,48 @@ structs:
     - type: unsigned __int16
       name: value
   member_functions: []
+- type: Client::UI::Agent::AgentContentsFinderInterface::RewardsData
+  name: RewardsData
+  namespace: Client.UI.Agent
+  union: False
+  size: 544
+  fields:
+  - type: Client::Game::InventoryItem
+    name: Items
+    offset: 0
+    size: 7
+    is_string: False
+  - type: int
+    name: Experience
+    offset: 504
+  - type: int
+    name: Gil
+    offset: 508
+  - type: int
+    name: GrandCompanySeals
+    offset: 512
+  - type: int
+    name: CurrencyA
+    offset: 516
+  - type: int
+    name: CurrencyB
+    offset: 520
+  - type: int
+    name: CurrencyC
+    offset: 524
+  - type: int
+    name: PvPExp
+    offset: 528
+  - type: int
+    name: SeriesExp
+    offset: 532
+  - type: int
+    name: WolfMarks
+    offset: 536
+  - type: char
+    name: LimitedTimeBonus
+    offset: 540
+  member_functions: []
 - type: Client::UI::Agent::AgentContentsFinderReward::RewardWrap
   name: RewardWrap
   namespace: Client.UI.Agent
@@ -97140,8 +97615,8 @@ structs:
     offset: 504
     size: 9
     is_string: False
-  - type: byte
-    name: Unk21C
+  - type: char
+    name: LimitedTimeBonus
     offset: 540
   member_functions: []
 - type: Client::UI::Agent::AgentEmjVoiceCharacter
@@ -99316,11 +99791,14 @@ structs:
     name: DictSize
     offset: 164
   - type: unsigned __int16
-    name: UnkA6
+    name: NumberArrayEntryCountIndex
     offset: 166
   - type: unsigned __int16
-    name: UnkA8
+    name: NumberArrayEntryCountIndex2
     offset: 168
+  - type: unsigned __int16
+    name: StringArrayGroupsCountIndex
+    offset: 170
   - type: Client::UI::Info::InfoProxyCommonList::CharacterData*
     name: CharData
     offset: 176
@@ -103671,6 +104149,27 @@ structs:
     - type: byte
       name: classJobId
   member_functions: []
+- type: Client::UI::Agent::AgentContentsFinderInterface::RewardsContainer
+  name: RewardsContainer
+  namespace: Client.UI.Agent
+  union: False
+  size: 1992
+  fields:
+  - type: Client::UI::Agent::AgentContentsFinderInterface::RewardsData
+    name: ContentRewards
+    offset: 0
+  - type: Client::Game::InventoryItem
+    name: Items
+    offset: 544
+    size: 5
+    is_string: False
+  - type: Client::UI::Agent::AgentContentsFinderInterface::RewardsData
+    name: ContentRouletteRoleBonusRewards
+    offset: 904
+  - type: Client::UI::Agent::AgentContentsFinderInterface::RewardsData
+    name: UnkItems3
+    offset: 1448
+  member_functions: []
 - type: Client::UI::Agent::AgentContentsFinderReward::ItemWrap
   name: ItemWrap
   namespace: Client.UI.Agent
@@ -104483,141 +104982,6 @@ structs:
   - type: char
     name: Initialized
     offset: 176
-  member_functions: []
-- type: Client::UI::Agent::AgentRaidFinder
-  name: AgentRaidFinder
-  namespace: Client.UI.Agent
-  union: False
-  size: 9064
-  fields:
-  - type: Client::UI::Agent::AgentInterface
-    name: AgentInterface
-    offset: 0
-    base: true
-  - type: unsigned int
-    name: SelectedEntry
-    offset: 44
-  - type: Client::UI::Agent::AgentRaidFinder::TabData
-    name: Tabs
-    offset: 7848
-    size: 4
-    is_string: False
-  - type: unsigned int
-    name: SelectedTab
-    offset: 8936
-  virtual_functions:
-  - name: ReceiveEvent
-    offset: 0
-    return_type: Component::GUI::AtkValue*
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: Component::GUI::AtkValue*
-      name: returnValue
-    - type: Component::GUI::AtkValue*
-      name: values
-    - type: unsigned int
-      name: valueCount
-    - type: unsigned __int64
-      name: eventKind
-  - name: ReceiveEventWithResult
-    offset: 8
-    return_type: Component::GUI::AtkValue*
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: Component::GUI::AtkValue*
-      name: returnValue
-    - type: Component::GUI::AtkValue*
-      name: values
-    - type: unsigned int
-      name: valueCount
-    - type: unsigned __int64
-      name: eventKind
-  - name: Dtor
-    offset: 16
-    return_type: Client::UI::Agent::AgentInterface*
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: byte
-      name: freeFlags
-  - name: Show
-    offset: 24
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-  - name: ShowFromLua
-    offset: 32
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: int
-      name: id
-    - type: int*
-      name: args
-    - type: __int64
-      name: argCount
-  - name: Hide
-    offset: 40
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-  - name: IsAgentActive
-    offset: 48
-    return_type: char
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-  - name: Update
-    offset: 56
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: unsigned int
-      name: frameCount
-  - name: IsActivatable
-    offset: 64
-    return_type: char
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-  - name: GetAddonId
-    offset: 72
-    return_type: unsigned int
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-  - name: OnGameEvent
-    offset: 80
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: Client::UI::Agent::AgentGameEvent
-      name: gameEvent
-  - name: OnLevelChange
-    offset: 88
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: byte
-      name: classJobId
-    - type: unsigned __int16
-      name: level
-  - name: OnClassJobChange
-    offset: 96
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentRaidFinder*
-      name: this
-    - type: byte
-      name: classJobId
   member_functions: []
 - type: Client::UI::Agent::AgentRecipeNote
   name: AgentRecipeNote
@@ -110208,7 +110572,7 @@ structs:
     name: Inventories
     offset: 7688
   - type: Client::Game::InventoryType
-    name: ItemLevelInventoryType
+    name: EquippedItemsInventoryType
     offset: 7696
   - type: Client::Game::InventoryItem
     name: TradeItemsLocal
@@ -111420,6 +111784,96 @@ structs:
     - type: Client::Game::InventoryType
       name: inventoryType
   member_functions: []
+- type: Client::Game::WKS::WKSManager
+  name: WKSManager
+  namespace: Client.Game.WKS
+  union: False
+  size: 4688
+  fields:
+  - type: Client::Game::Character::CharacterManagerInterface
+    name: CharacterManagerInterface
+    offset: 0
+    base: true
+  - type: unsigned __int16
+    name: TerritoryId
+    offset: 24
+  - type: char
+    name: IsLoaded
+    offset: 26
+  - type: Client::Game::WKS::WKSManager::WKSState
+    name: State
+    offset: 80
+  - type: __int64
+    name: UnkStruct10F8
+    offset: 4344
+  - type: __int64
+    name: UnkStruct1100
+    offset: 4352
+  - type: Client::Game::WKS::WKSMechaEventModule*
+    name: MechaEventModule
+    offset: 4360
+  - type: __int64
+    name: UnkStruct1110
+    offset: 4368
+  - type: __int64
+    name: UnkStruct1118
+    offset: 4376
+  - type: __int64
+    name: EmergencyInfoModule
+    offset: 4384
+  - type: __int64
+    name: UnkStruct1128
+    offset: 4392
+  - type: __int64
+    name: UnkStruct1130
+    offset: 4400
+  - type: Client::Game::WKS::WKSMissionModule*
+    name: MissionModule
+    offset: 4408
+  - type: Client::Game::WKS::WKSResearchModule*
+    name: ResearchModule
+    offset: 4416
+  - type: __int64
+    name: UnkStruct1148
+    offset: 4424
+  - type: __int64
+    name: UnkStruct1150
+    offset: 4432
+  - type: StdVector<Client::Game::WKS::WKSModuleBase*>
+    name: Modules
+    offset: 4440
+  virtual_functions:
+  - name: Dtor
+    offset: 40
+    return_type: Client::Game::Character::CharacterManagerInterface*
+    parameters:
+    - type: Client::Game::WKS::WKSManager*
+      name: this
+    - type: byte
+      name: freeFlags
+  member_functions:
+  - signature: 48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 0F B7 DA 48 8B F9 E8 ?? ?? ?? ?? 8B CB
+    return_type: void
+    name: Load
+    parameters:
+    - type: Client::Game::WKS::WKSManager*
+      name: this
+    - type: unsigned __int16
+      name: territoryId
+  - signature: E8 ?? ?? ?? ?? 0F B6 F8 49 8B 4E
+    return_type: char
+    name: IsFunctionUnlocked
+    parameters:
+    - type: Client::Game::WKS::WKSManager*
+      name: this
+    - type: byte
+      name: functionRowId
+  static_members:
+  - signature: 48 89 05 ?? ?? ?? ?? 48 8B F8
+    relative_follow_offsets:
+    - 3
+    is_pointer: True
+    return_type: Client::Game::WKS::WKSManager
 - type: Client::Game::WKS::WKSMechaEvent
   name: WKSMechaEvent
   namespace: Client.Game.WKS
@@ -112928,12 +113382,33 @@ structs:
   - type: Client::UI::Agent::MiragePrismPrismBoxData*
     name: Data
     offset: 40
+  - type: __int64
+    name: OpenerCallbackPtr
+    offset: 48
+  - type: char
+    name: IsDataLoaded
+    offset: 56
   - type: byte
     name: TabIndex
     offset: 57
   - type: byte
     name: PageIndex
     offset: 58
+  - type: unsigned int
+    name: CrystalizeAddonId
+    offset: 60
+  - type: unsigned int
+    name: ContextAddonId
+    offset: 64
+  - type: unsigned int
+    name: ContextAddon2Id
+    offset: 68
+  - type: __int16
+    name: SavedAddonX
+    offset: 72
+  - type: __int16
+    name: SavedAddonY
+    offset: 74
   - type: Client::Game::InventoryItem
     name: TempDyeItem
     offset: 80
@@ -113108,6 +113583,11 @@ structs:
   - type: Client::UI::Info::InfoProxyFriendList::NameBuffer
     name: Names
     offset: 656
+    size: 200
+    is_string: False
+  - type: int
+    name: TimeStamps
+    offset: 14256
     size: 200
     is_string: False
   virtual_functions:
@@ -117068,6 +117548,106 @@ structs:
     - type: byte
       name: classJobId
   member_functions: []
+- type: Client::UI::Agent::AgentContentsFinderInterface
+  name: AgentContentsFinderInterface
+  namespace: Client.UI.Agent
+  union: False
+  size: 2176
+  fields:
+  - type: Client::UI::Agent::AgentInterface*
+    name: AgentInterface
+    offset: 0
+  - type: unsigned __int64
+    name: EventKind
+    offset: 8
+  - type: Client::System::String::Utf8String
+    name: Description
+    offset: 16
+  - type: Client::UI::Agent::AgentContentsFinderInterface::RewardsContainer
+    name: Rewards
+    offset: 120
+  - type: Common::Component::Excel::ExcelSheet*
+    name: InstanceContentSheet
+    offset: 2112
+  - type: Common::Component::Excel::ExcelSheet*
+    name: ContentFinderConditionTransientSheet
+    offset: 2120
+  - type: Common::Component::Excel::ExcelSheet*
+    name: InstanceContentRewardItemSheet
+    offset: 2128
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: InstanceContentSheetWaiter
+    offset: 2136
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: ContentFinderConditionTransientSheetWaiter
+    offset: 2144
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: InstanceContentRewardItemSheetWaiter
+    offset: 2152
+  - type: int
+    name: SelectedDutyId
+    offset: 2160
+  - type: __int8
+    name: UnkMaxReceivedRewardValues
+    offset: 2164
+    size: 4
+    is_string: False
+  - type: char
+    name: Unk878
+    offset: 2168
+  - type: char
+    name: Unk879
+    offset: 2169
+  - type: char
+    name: Unk87A
+    offset: 2170
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 49 63 47 ?? 49 8D 4F
+    return_type: void
+    name: SetAgent
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinderInterface*
+      name: this
+    - type: Client::UI::Agent::AgentInterface*
+      name: agent
+    - type: unsigned __int64
+      name: eventKind
+  - signature: E8 ?? ?? ?? ?? EB ?? 0F B6 52
+    return_type: char
+    name: LoadContentFinderCondition
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinderInterface*
+      name: this
+    - type: byte
+      name: rowId
+  - signature: E8 ?? ?? ?? ?? 49 63 47 ?? 49 8D 4F
+    return_type: char
+    name: LoadContentRoulette
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinderInterface*
+      name: this
+    - type: byte
+      name: rowId
+  - signature: E9 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 48 89 6C 24 ?? 33 ED
+    return_type: char
+    name: LoadInstanceContent
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinderInterface*
+      name: this
+    - type: byte
+      name: rowId
+  - signature: E9 ?? ?? ?? ?? 32 C0 48 81 C4
+    return_type: int
+    name: GetReceivedRewardCount
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinderInterface*
+      name: this
+  - signature: E8 ?? ?? ?? ?? 85 C0 74 ?? 48 8D 4B ?? E8
+    return_type: int
+    name: GetMaxReceivedRewardCount
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinderInterface*
+      name: this
 - type: Client::UI::Agent::AgentContentsFinderReward
   name: AgentContentsFinderReward
   namespace: Client.UI.Agent
@@ -117091,6 +117671,12 @@ structs:
   - type: Common::Component::Excel::ExcelSheet*
     name: ItemSheet
     offset: 2000
+  - type: Client::UI::Agent::AgentInterface*
+    name: AgentInterface
+    offset: 2016
+  - type: unsigned __int64
+    name: EventKind
+    offset: 2024
   - type: Client::UI::Agent::AgentContentsFinderReward::ItemWrap
     name: NormalRewards
     offset: 2032
@@ -121731,6 +122317,16 @@ structs:
       name: addonId
     - type: byte
       name: a4
+- type: Client::UI::Agent::AgentVVDFinder::VVDFinderData
+  name: VVDFinderData
+  namespace: Client.UI.Agent
+  union: False
+  size: 16920
+  fields:
+  - type: Client::UI::Agent::AgentContentsFinderInterface
+    name: InterfaceSub
+    offset: 8912
+  member_functions: []
 - type: Client::UI::Agent::TofuListData
   name: TofuListData
   namespace: Client.UI.Agent
@@ -125885,9 +126481,33 @@ structs:
   - type: Common::Lua::LuaStatus
     name: LuaStatus
     offset: 148
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: UnkExcelSheetWaiter1
+    offset: 152
+  - type: Common::Component::Excel::ExcelSheet*
+    name: UnkExcelSheet1
+    offset: 160
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: UnkExcelSheetWaiter2
+    offset: 168
+  - type: Common::Component::Excel::ExcelSheet*
+    name: UnkExcelSheet2
+    offset: 176
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: UnkExcelSheetWaiter3
+    offset: 184
+  - type: Common::Component::Excel::ExcelSheet*
+    name: UnkExcelSheet3
+    offset: 192
   - type: Client::System::String::Utf8String
-    name: UnkString0
+    name: UnkSheetName
     offset: 200
+  - type: Common::Component::Excel::ExcelSheetWaiter*
+    name: UnkExcelSheetWaiter4
+    offset: 344
+  - type: Common::Component::Excel::ExcelSheet*
+    name: UnkExcelSheet4
+    offset: 352
   vtable_size: 2200
   virtual_functions:
   - name: Dtor
@@ -149380,439 +150000,6 @@ structs:
     - type: char
       name: a3
   member_functions: []
-- type: Client::UI::AddonMiragePrismPrismBox
-  name: AddonMiragePrismPrismBox
-  namespace: Client.UI
-  union: False
-  size: 5184
-  fields:
-  - type: Component::GUI::AtkUnitBase
-    name: AtkUnitBase
-    offset: 0
-    base: true
-  - type: Component::GUI::AtkComponentButton*
-    name: PrevButton
-    offset: 4584
-  - type: Component::GUI::AtkComponentButton*
-    name: NextButton
-    offset: 4592
-  - type: Component::GUI::AtkComponentButton*
-    name: EditGlamourPlatesButton
-    offset: 4600
-  - type: Component::GUI::AtkComponentDropDownList*
-    name: JobDropdown
-    offset: 4664
-  - type: Component::GUI::AtkComponentDropDownList*
-    name: OrderDropdown
-    offset: 4704
-  virtual_functions:
-  - name: Dtor
-    offset: 0
-    return_type: Component::GUI::AtkEventListener*
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: byte
-      name: freeFlags
-  - name: ReceiveGlobalEvent
-    offset: 8
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: Component::GUI::AtkEventType
-      name: eventType
-    - type: int
-      name: eventParam
-    - type: Component::GUI::AtkEvent*
-      name: atkEvent
-    - type: Component::GUI::AtkEventData*
-      name: atkEventData
-  - name: ReceiveEvent
-    offset: 16
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: Component::GUI::AtkEventType
-      name: eventType
-    - type: int
-      name: eventParam
-    - type: Component::GUI::AtkEvent*
-      name: atkEvent
-    - type: Component::GUI::AtkEventData*
-      name: atkEventData
-  - name: Open
-    offset: 24
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: unsigned int
-      name: depthLayer
-  - name: Close
-    offset: 32
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: char
-      name: fireCallback
-  - name: Show
-    offset: 40
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: char
-      name: disableShowTransition
-    - type: unsigned int
-      name: unsetShowHideFlags
-  - name: Hide
-    offset: 48
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: char
-      name: disableHideTransition
-    - type: char
-      name: callCloseCallback
-    - type: unsigned int
-      name: setShowHideFlags
-  - name: SetPosition
-    offset: 56
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: __int16
-      name: x
-    - type: __int16
-      name: y
-  - name: SetX
-    offset: 64
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: __int16
-      name: value
-  - name: SetY
-    offset: 72
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: __int16
-      name: value
-  - name: GetX
-    offset: 80
-    return_type: __int16
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: GetY
-    offset: 88
-    return_type: __int16
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: GetPosition
-    offset: 96
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: __int16*
-      name: outX
-    - type: __int16*
-      name: outY
-  - name: SetAlpha
-    offset: 104
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: byte
-      name: alpha
-  - name: SetScale
-    offset: 112
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: float
-      name: scale
-    - type: char
-      name: a3
-  - name: GetSize
-    offset: 120
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: unsigned __int16*
-      name: outWidth
-    - type: unsigned __int16*
-      name: outHeight
-    - type: char
-      name: scaled
-  - name: Hide2
-    offset: 128
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: SetScaleToHudLayoutScale
-    offset: 136
-    return_type: __int8
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: ShouldCollideWithWindow
-    offset: 144
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: Component::GUI::AtkCollisionNode*
-      name: collisionNode
-  - name: OnMove
-    offset: 160
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: HandleCursorTypeChange
-    offset: 176
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: ShouldIgnoreInputs
-    offset: 184
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: GetRootNode
-    offset: 192
-    return_type: Component::GUI::AtkResNode*
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: GetWindowBounds
-    offset: 216
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: Common::Math::Bounds*
-      name: outBounds
-  - name: GetRootBounds
-    offset: 240
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: Common::Math::Bounds*
-      name: outBounds
-  - name: SetDepthLayer
-    offset: 248
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: unsigned int
-      name: depthLayerIndex
-  - name: ShouldAllowCursorFocus
-    offset: 256
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: GetUnitBaseForFocus
-    offset: 280
-    return_type: Component::GUI::AtkUnitBase*
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: Focus
-    offset: 296
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: Initialize
-    offset: 328
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: Finalizer
-    offset: 336
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: Update
-    offset: 344
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: float
-      name: delta
-  - name: Draw
-    offset: 352
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: LoadUldResourceHandle
-    offset: 368
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: CheckWindowCollisionAtCoords
-    offset: 376
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: __int16
-      name: x
-    - type: __int16
-      name: y
-  - name: OnSetup
-    offset: 392
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: unsigned int
-      name: valueCount
-    - type: Component::GUI::AtkValue*
-      name: values
-  - name: OnRefresh
-    offset: 408
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: unsigned int
-      name: valueCount
-    - type: Component::GUI::AtkValue*
-      name: values
-  - name: OnRequestedUpdate
-    offset: 416
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: Component::GUI::NumberArrayData**
-      name: numberArrayData
-    - type: Component::GUI::StringArrayData**
-      name: stringArrayData
-  - name: FireCloseCallback
-    offset: 432
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: SetSizeFromConfig
-    offset: 448
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: float
-      name: width
-    - type: float
-      name: height
-  - name: HandleCustomInput
-    offset: 456
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: Component::GUI::AtkEventData::AtkInputData*
-      name: inputData
-  - name: OnFocusChange
-    offset: 472
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: char
-      name: isFocused
-  - name: OnScreenSizeChange
-    offset: 480
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: int
-      name: width
-    - type: int
-      name: height
-  - name: OnConfigLoaded
-    offset: 488
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: char
-      name: isInitialLoad
-  - name: OnMouseOver
-    offset: 496
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: OnMouseOut
-    offset: 504
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: IsFullyLoaded
-    offset: 528
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-  - name: PlaySoundEffect
-    offset: 536
-    return_type: void
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: int
-      name: soundEffectId
-  - name: HandleDPadInput
-    offset: 552
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: int
-      name: inputId
-    - type: char
-      name: a3
-  - name: HandleBackButtonInput
-    offset: 568
-    return_type: char
-    parameters:
-    - type: Client::UI::AddonMiragePrismPrismBox*
-      name: this
-    - type: int
-      name: inputId
-    - type: char
-      name: a3
-  member_functions: []
 - type: Client::UI::AddonMobHunt
   name: AddonMobHunt
   namespace: Client.UI
@@ -170950,6 +171137,506 @@ structs:
     - type: char
       name: a3
   member_functions: []
+- type: Client::UI::AddonMiragePrismPrismBox
+  name: AddonMiragePrismPrismBox
+  namespace: Client.UI
+  union: False
+  size: 5184
+  fields:
+  - type: Component::GUI::AtkUnitBase
+    name: AtkUnitBase
+    offset: 0
+    base: true
+  - type: Client::UI::AddonMiragePrismPrismBox::ItemSlot
+    name: ItemSlots
+    offset: 568
+    size: 50
+    is_string: False
+  - type: Component::GUI::AtkComponentButton*
+    name: PrevButton
+    offset: 4584
+  - type: Component::GUI::AtkComponentButton*
+    name: NextButton
+    offset: 4592
+  - type: Component::GUI::AtkComponentButton*
+    name: EditGlamourPlatesButton
+    offset: 4600
+  - type: Component::GUI::AtkResNode*
+    name: Unk1200
+    offset: 4608
+  - type: Component::GUI::AtkTextNode*
+    name: Unk1208
+    offset: 4616
+  - type: Component::GUI::AtkTextNode*
+    name: UsedSlotsText
+    offset: 4624
+  - type: Component::GUI::AtkTextNode*
+    name: CategoryLabelText
+    offset: 4632
+  - type: Component::GUI::AtkImageNode*
+    name: CategoryIcon
+    offset: 4640
+  - type: Component::GUI::AtkComponentWindow*
+    name: WindowComponent
+    offset: 4648
+  - type: Component::GUI::AtkResNode*
+    name: SlotsContentNode
+    offset: 4656
+  - type: Component::GUI::AtkComponentDropDownList*
+    name: JobDropdown
+    offset: 4664
+  - type: Component::GUI::AtkResNode*
+    name: FilterNode
+    offset: 4672
+  - type: Component::GUI::AtkComponentBase*
+    name: FilterButton
+    offset: 4680
+  - type: Component::GUI::AtkComponentTextInput*
+    name: SearchInput
+    offset: 4688
+  - type: Component::GUI::AtkResNode*
+    name: SearchBar
+    offset: 4696
+  - type: Component::GUI::AtkComponentDropDownList*
+    name: OrderDropdown
+    offset: 4704
+  - type: Component::GUI::AtkComponentButton*
+    name: GuideButton
+    offset: 4712
+  - type: Component::GUI::AtkComponentRadioButton*
+    name: SlotTabs
+    offset: 4720
+    size: 13
+    is_string: False
+  - type: unsigned int
+    name: Unk12D8
+    offset: 4824
+  - type: unsigned int
+    name: SelectedTabIndex
+    offset: 4828
+  - type: char*
+    name: JobLabels
+    offset: 4832
+    size: 35
+    is_string: False
+  - type: byte
+    name: JobIds
+    offset: 5112
+    size: 35
+    is_string: False
+  - type: char*
+    name: OrderLabels
+    offset: 5152
+    size: 2
+    is_string: False
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Component::GUI::AtkEventListener*
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: ReceiveGlobalEvent
+    offset: 8
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: ReceiveEvent
+    offset: 16
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: Open
+    offset: 24
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: unsigned int
+      name: depthLayer
+  - name: Close
+    offset: 32
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: char
+      name: fireCallback
+  - name: Show
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: char
+      name: disableShowTransition
+    - type: unsigned int
+      name: unsetShowHideFlags
+  - name: Hide
+    offset: 48
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: char
+      name: disableHideTransition
+    - type: char
+      name: callCloseCallback
+    - type: unsigned int
+      name: setShowHideFlags
+  - name: SetPosition
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: SetX
+    offset: 64
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: __int16
+      name: value
+  - name: SetY
+    offset: 72
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: __int16
+      name: value
+  - name: GetX
+    offset: 80
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: GetY
+    offset: 88
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: GetPosition
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: __int16*
+      name: outX
+    - type: __int16*
+      name: outY
+  - name: SetAlpha
+    offset: 104
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: byte
+      name: alpha
+  - name: SetScale
+    offset: 112
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: float
+      name: scale
+    - type: char
+      name: a3
+  - name: GetSize
+    offset: 120
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: unsigned __int16*
+      name: outWidth
+    - type: unsigned __int16*
+      name: outHeight
+    - type: char
+      name: scaled
+  - name: Hide2
+    offset: 128
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: SetScaleToHudLayoutScale
+    offset: 136
+    return_type: __int8
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: ShouldCollideWithWindow
+    offset: 144
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: Component::GUI::AtkCollisionNode*
+      name: collisionNode
+  - name: OnMove
+    offset: 160
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: HandleCursorTypeChange
+    offset: 176
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: ShouldIgnoreInputs
+    offset: 184
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: GetRootNode
+    offset: 192
+    return_type: Component::GUI::AtkResNode*
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: GetWindowBounds
+    offset: 216
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: GetRootBounds
+    offset: 240
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: SetDepthLayer
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: unsigned int
+      name: depthLayerIndex
+  - name: ShouldAllowCursorFocus
+    offset: 256
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: GetUnitBaseForFocus
+    offset: 280
+    return_type: Component::GUI::AtkUnitBase*
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: Focus
+    offset: 296
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: Initialize
+    offset: 328
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: Finalizer
+    offset: 336
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: Update
+    offset: 344
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: float
+      name: delta
+  - name: Draw
+    offset: 352
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: LoadUldResourceHandle
+    offset: 368
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: CheckWindowCollisionAtCoords
+    offset: 376
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: OnSetup
+    offset: 392
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRefresh
+    offset: 408
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRequestedUpdate
+    offset: 416
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: Component::GUI::NumberArrayData**
+      name: numberArrayData
+    - type: Component::GUI::StringArrayData**
+      name: stringArrayData
+  - name: FireCloseCallback
+    offset: 432
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: SetSizeFromConfig
+    offset: 448
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: float
+      name: width
+    - type: float
+      name: height
+  - name: HandleCustomInput
+    offset: 456
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: Component::GUI::AtkEventData::AtkInputData*
+      name: inputData
+  - name: OnFocusChange
+    offset: 472
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: char
+      name: isFocused
+  - name: OnScreenSizeChange
+    offset: 480
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: int
+      name: width
+    - type: int
+      name: height
+  - name: OnConfigLoaded
+    offset: 488
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: char
+      name: isInitialLoad
+  - name: OnMouseOver
+    offset: 496
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: OnMouseOut
+    offset: 504
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: IsFullyLoaded
+    offset: 528
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+  - name: PlaySoundEffect
+    offset: 536
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: int
+      name: soundEffectId
+  - name: HandleDPadInput
+    offset: 552
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  - name: HandleBackButtonInput
+    offset: 568
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonMiragePrismPrismBox*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  member_functions: []
 - type: Client::UI::AddonNeedGreed
   name: AddonNeedGreed
   namespace: Client.UI
@@ -174962,6 +175649,439 @@ structs:
     - type: char
       name: a3
   member_functions: []
+- type: Client::UI::AddonTalkSubtitle
+  name: AddonTalkSubtitle
+  namespace: Client.UI
+  union: False
+  size: 688
+  fields:
+  - type: Component::GUI::AtkUnitBase
+    name: AtkUnitBase
+    offset: 0
+    base: true
+  - type: Client::System::String::Utf8String
+    name: SubtitleText
+    offset: 568
+  - type: unsigned int
+    name: SubtitleMaxWidth
+    offset: 672
+  - type: float
+    name: SubtitleScale
+    offset: 676
+  - type: char
+    name: IsShowSuppressed
+    offset: 680
+  - type: char
+    name: UnkIsAnchorPending
+    offset: 681
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Component::GUI::AtkEventListener*
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: ReceiveGlobalEvent
+    offset: 8
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: ReceiveEvent
+    offset: 16
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: Open
+    offset: 24
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: unsigned int
+      name: depthLayer
+  - name: Close
+    offset: 32
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: char
+      name: fireCallback
+  - name: Show
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: char
+      name: disableShowTransition
+    - type: unsigned int
+      name: unsetShowHideFlags
+  - name: Hide
+    offset: 48
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: char
+      name: disableHideTransition
+    - type: char
+      name: callCloseCallback
+    - type: unsigned int
+      name: setShowHideFlags
+  - name: SetPosition
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: SetX
+    offset: 64
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: __int16
+      name: value
+  - name: SetY
+    offset: 72
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: __int16
+      name: value
+  - name: GetX
+    offset: 80
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: GetY
+    offset: 88
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: GetPosition
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: __int16*
+      name: outX
+    - type: __int16*
+      name: outY
+  - name: SetAlpha
+    offset: 104
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: byte
+      name: alpha
+  - name: SetScale
+    offset: 112
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: float
+      name: scale
+    - type: char
+      name: a3
+  - name: GetSize
+    offset: 120
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: unsigned __int16*
+      name: outWidth
+    - type: unsigned __int16*
+      name: outHeight
+    - type: char
+      name: scaled
+  - name: Hide2
+    offset: 128
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: SetScaleToHudLayoutScale
+    offset: 136
+    return_type: __int8
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: ShouldCollideWithWindow
+    offset: 144
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: Component::GUI::AtkCollisionNode*
+      name: collisionNode
+  - name: OnMove
+    offset: 160
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: HandleCursorTypeChange
+    offset: 176
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: ShouldIgnoreInputs
+    offset: 184
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: GetRootNode
+    offset: 192
+    return_type: Component::GUI::AtkResNode*
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: GetWindowBounds
+    offset: 216
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: GetRootBounds
+    offset: 240
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: SetDepthLayer
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: unsigned int
+      name: depthLayerIndex
+  - name: ShouldAllowCursorFocus
+    offset: 256
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: GetUnitBaseForFocus
+    offset: 280
+    return_type: Component::GUI::AtkUnitBase*
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: Focus
+    offset: 296
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: Initialize
+    offset: 328
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: Finalizer
+    offset: 336
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: Update
+    offset: 344
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: float
+      name: delta
+  - name: Draw
+    offset: 352
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: LoadUldResourceHandle
+    offset: 368
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: CheckWindowCollisionAtCoords
+    offset: 376
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: OnSetup
+    offset: 392
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRefresh
+    offset: 408
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRequestedUpdate
+    offset: 416
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: Component::GUI::NumberArrayData**
+      name: numberArrayData
+    - type: Component::GUI::StringArrayData**
+      name: stringArrayData
+  - name: FireCloseCallback
+    offset: 432
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: SetSizeFromConfig
+    offset: 448
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: float
+      name: width
+    - type: float
+      name: height
+  - name: HandleCustomInput
+    offset: 456
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: Component::GUI::AtkEventData::AtkInputData*
+      name: inputData
+  - name: OnFocusChange
+    offset: 472
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: char
+      name: isFocused
+  - name: OnScreenSizeChange
+    offset: 480
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: int
+      name: width
+    - type: int
+      name: height
+  - name: OnConfigLoaded
+    offset: 488
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: char
+      name: isInitialLoad
+  - name: OnMouseOver
+    offset: 496
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: OnMouseOut
+    offset: 504
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: IsFullyLoaded
+    offset: 528
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+  - name: PlaySoundEffect
+    offset: 536
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: int
+      name: soundEffectId
+  - name: HandleDPadInput
+    offset: 552
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  - name: HandleBackButtonInput
+    offset: 568
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonTalkSubtitle*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  member_functions: []
 - type: Client::UI::AddonTooltip
   name: AddonTooltip
   namespace: Client.UI
@@ -176241,41 +177361,6 @@ structs:
       name: inputId
     - type: char
       name: a3
-  member_functions: []
-- type: Client::UI::Agent::AgentDawnStory::DawnStoryData
-  name: DawnStoryData
-  namespace: Client.UI.Agent
-  union: False
-  size: 422080
-  fields:
-  - type: Client::UI::Agent::AgentDawnInterface::DawnContentData
-    name: ContentData
-    offset: 8
-  - type: Client::UI::Agent::AgentDawnInterface::DawnMemberData
-    name: MemberData
-    offset: 19960
-  - type: Client::UI::Agent::AgentDawnInterface::DawnPartyData
-    name: PartyData
-    offset: 411808
-  - type: unsigned int
-    name: RewardItemCount
-    offset: 411824
-  - type: Client::UI::Agent::AgentDawnStory::DawnRewardItemEntry
-    name: RewardItems
-    offset: 411832
-    size: 2
-    is_string: False
-  - type: Component::GUI::AtkValue
-    name: AtkValues
-    offset: 412072
-    size: 489
-    is_string: False
-  - type: unsigned int
-    name: ModalAddonId
-    offset: 419896
-  - type: unsigned int
-    name: Flags
-    offset: 419900
   member_functions: []
 - type: Client::UI::Agent::AgentHUD
   name: AgentHUD
@@ -180144,6 +181229,449 @@ structs:
     return_type: char
     parameters:
     - type: Client::UI::AddonAreaMap*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  member_functions: []
+- type: Client::UI::AddonCabinet
+  name: AddonCabinet
+  namespace: Client.UI
+  union: False
+  size: 19336
+  fields:
+  - type: Component::GUI::AtkUnitBase
+    name: AtkUnitBase
+    offset: 0
+    base: true
+  - type: Client::UI::AddonCabinet::ItemSlot
+    name: ItemSlots
+    offset: 568
+    size: 140
+    is_string: False
+  - type: Client::System::String::Utf8String
+    name: CategoryNames
+    offset: 18488
+    size: 7
+    is_string: False
+  - type: Component::GUI::AtkComponentList*
+    name: ItemList
+    offset: 19216
+  - type: Component::GUI::AtkResNode*
+    name: TimelineNode
+    offset: 19224
+  - type: Component::GUI::AtkComponentDropDownList*
+    name: CategoryDropDown
+    offset: 19240
+  - type: Component::GUI::AtkComponentButton*
+    name: CloseButton
+    offset: 19288
+  - type: unsigned int
+    name: CategoryIndex
+    offset: 19296
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Component::GUI::AtkEventListener*
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: ReceiveGlobalEvent
+    offset: 8
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: ReceiveEvent
+    offset: 16
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: Open
+    offset: 24
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: unsigned int
+      name: depthLayer
+  - name: Close
+    offset: 32
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: char
+      name: fireCallback
+  - name: Show
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: char
+      name: disableShowTransition
+    - type: unsigned int
+      name: unsetShowHideFlags
+  - name: Hide
+    offset: 48
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: char
+      name: disableHideTransition
+    - type: char
+      name: callCloseCallback
+    - type: unsigned int
+      name: setShowHideFlags
+  - name: SetPosition
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: SetX
+    offset: 64
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: __int16
+      name: value
+  - name: SetY
+    offset: 72
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: __int16
+      name: value
+  - name: GetX
+    offset: 80
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: GetY
+    offset: 88
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: GetPosition
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: __int16*
+      name: outX
+    - type: __int16*
+      name: outY
+  - name: SetAlpha
+    offset: 104
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: byte
+      name: alpha
+  - name: SetScale
+    offset: 112
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: float
+      name: scale
+    - type: char
+      name: a3
+  - name: GetSize
+    offset: 120
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: unsigned __int16*
+      name: outWidth
+    - type: unsigned __int16*
+      name: outHeight
+    - type: char
+      name: scaled
+  - name: Hide2
+    offset: 128
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: SetScaleToHudLayoutScale
+    offset: 136
+    return_type: __int8
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: ShouldCollideWithWindow
+    offset: 144
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: Component::GUI::AtkCollisionNode*
+      name: collisionNode
+  - name: OnMove
+    offset: 160
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: HandleCursorTypeChange
+    offset: 176
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: ShouldIgnoreInputs
+    offset: 184
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: GetRootNode
+    offset: 192
+    return_type: Component::GUI::AtkResNode*
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: GetWindowBounds
+    offset: 216
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: GetRootBounds
+    offset: 240
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: SetDepthLayer
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: unsigned int
+      name: depthLayerIndex
+  - name: ShouldAllowCursorFocus
+    offset: 256
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: GetUnitBaseForFocus
+    offset: 280
+    return_type: Component::GUI::AtkUnitBase*
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: Focus
+    offset: 296
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: Initialize
+    offset: 328
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: Finalizer
+    offset: 336
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: Update
+    offset: 344
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: float
+      name: delta
+  - name: Draw
+    offset: 352
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: LoadUldResourceHandle
+    offset: 368
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: CheckWindowCollisionAtCoords
+    offset: 376
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: OnSetup
+    offset: 392
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRefresh
+    offset: 408
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRequestedUpdate
+    offset: 416
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: Component::GUI::NumberArrayData**
+      name: numberArrayData
+    - type: Component::GUI::StringArrayData**
+      name: stringArrayData
+  - name: FireCloseCallback
+    offset: 432
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: SetSizeFromConfig
+    offset: 448
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: float
+      name: width
+    - type: float
+      name: height
+  - name: HandleCustomInput
+    offset: 456
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: Component::GUI::AtkEventData::AtkInputData*
+      name: inputData
+  - name: OnFocusChange
+    offset: 472
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: char
+      name: isFocused
+  - name: OnScreenSizeChange
+    offset: 480
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: int
+      name: width
+    - type: int
+      name: height
+  - name: OnConfigLoaded
+    offset: 488
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: char
+      name: isInitialLoad
+  - name: OnMouseOver
+    offset: 496
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: OnMouseOut
+    offset: 504
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: IsFullyLoaded
+    offset: 528
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+  - name: PlaySoundEffect
+    offset: 536
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: int
+      name: soundEffectId
+  - name: HandleDPadInput
+    offset: 552
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  - name: HandleBackButtonInput
+    offset: 568
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonCabinet*
       name: this
     - type: int
       name: inputId
@@ -203707,6 +205235,147 @@ structs:
     - type: char
       name: a3
   member_functions: []
+- type: Client::UI::Agent::AgentRaidFinder
+  name: AgentRaidFinder
+  namespace: Client.UI.Agent
+  union: False
+  size: 9064
+  fields:
+  - type: Client::UI::Agent::AgentInterface
+    name: AgentInterface
+    offset: 0
+    base: true
+  - type: unsigned int
+    name: SelectedEntry
+    offset: 44
+  - type: Client::UI::Agent::AgentContentsFinderInterface
+    name: InterfaceSub
+    offset: 56
+  - type: Client::UI::Agent::AgentContentsFinderReward
+    name: RewardsSub
+    offset: 2232
+  - type: Client::UI::Agent::AgentRaidFinder::TabData
+    name: Tabs
+    offset: 7848
+    size: 4
+    is_string: False
+  - type: unsigned int
+    name: SelectedTab
+    offset: 8936
+  virtual_functions:
+  - name: ReceiveEvent
+    offset: 0
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: ReceiveEventWithResult
+    offset: 8
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: Dtor
+    offset: 16
+    return_type: Client::UI::Agent::AgentInterface*
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: Show
+    offset: 24
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+  - name: ShowFromLua
+    offset: 32
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: int
+      name: id
+    - type: int*
+      name: args
+    - type: __int64
+      name: argCount
+  - name: Hide
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+  - name: IsAgentActive
+    offset: 48
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+  - name: Update
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: unsigned int
+      name: frameCount
+  - name: IsActivatable
+    offset: 64
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+  - name: GetAddonId
+    offset: 72
+    return_type: unsigned int
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+  - name: OnGameEvent
+    offset: 80
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: Client::UI::Agent::AgentGameEvent
+      name: gameEvent
+  - name: OnLevelChange
+    offset: 88
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: byte
+      name: classJobId
+    - type: unsigned __int16
+      name: level
+  - name: OnClassJobChange
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentRaidFinder*
+      name: this
+    - type: byte
+      name: classJobId
+  member_functions: []
 - type: Client::UI::Agent::AgentTryon
   name: AgentTryon
   namespace: Client.UI.Agent
@@ -203751,7 +205420,7 @@ structs:
     name: Unk369
     offset: 873
   - type: Client::Game::InventoryType
-    name: ItemLevelInventoryType
+    name: EquippedItemsInventoryType
     offset: 876
   - type: Client::UI::Agent::AgentTryon::TryOnItem
     name: TryOnItems
@@ -215190,229 +216859,6 @@ structs:
     - type: char
       name: a3
   member_functions: []
-- type: Client::UI::Agent::AgentContentsFinder
-  name: AgentContentsFinder
-  namespace: Client.UI.Agent
-  union: False
-  size: 9304
-  fields:
-  - type: Client::UI::Agent::AgentInterface
-    name: AgentInterface
-    offset: 0
-    base: true
-  - type: Client::UI::Agent::AgentContentsFinderInterface
-    name: InterfaceSub
-    offset: 40
-  - type: Client::UI::Agent::AgentContentsFinderReward
-    name: RewardSub
-    offset: 2216
-  - type: Client::UI::Agent::AgentContentsFinder::RewardContextMenuEventHandler
-    name: RewardContextMenuHandler
-    offset: 7792
-  - type: StdVector<Client::UI::Agent::Contents*>
-    name: ContentList
-    offset: 7832
-  - type: StdVector<Client::UI::Agent::ContentsId>
-    name: SelectedContent
-    offset: 7856
-  - type: Client::UI::Agent::ContentsId
-    name: SelectedDuty
-    offset: 7880
-  - type: byte
-    name: NumCollectedRewards
-    offset: 7896
-  - type: char
-    name: HasRouletteSelected
-    offset: 7897
-  - type: Client::UI::UIModule*
-    name: UIModule
-    offset: 7960
-  - type: Client::System::String::Utf8String
-    name: Strings
-    offset: 7976
-    size: 10
-    is_string: False
-  - type: Client::UI::Agent::ContentsRouletteRole
-    name: ContentRouletteRoleBonuses
-    offset: 9105
-    size: 11
-    is_string: False
-  - type: unsigned int
-    name: DutyPenaltyMinutes
-    offset: 9116
-  - type: unsigned int
-    name: UnkPenaltyMinutes
-    offset: 9120
-  - type: Client::Sound::SoundData*
-    name: TimeCountSoundDataPad
-    offset: 9128
-  - type: Client::Sound::SoundData*
-    name: TimeCountSoundData
-    offset: 9136
-  - type: int
-    name: CurrentTimestamp
-    offset: 9176
-  - type: int
-    name: RecruitingParties
-    offset: 9184
-  - type: byte
-    name: SelectedTab
-    offset: 9188
-  - type: char
-    name: TabChanged
-    offset: 9197
-  - type: char
-    name: ListChanged
-    offset: 9198
-  - type: char
-    name: DetailsChanged
-    offset: 9199
-  virtual_functions:
-  - name: ReceiveEvent
-    offset: 0
-    return_type: Component::GUI::AtkValue*
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: Component::GUI::AtkValue*
-      name: returnValue
-    - type: Component::GUI::AtkValue*
-      name: values
-    - type: unsigned int
-      name: valueCount
-    - type: unsigned __int64
-      name: eventKind
-  - name: ReceiveEventWithResult
-    offset: 8
-    return_type: Component::GUI::AtkValue*
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: Component::GUI::AtkValue*
-      name: returnValue
-    - type: Component::GUI::AtkValue*
-      name: values
-    - type: unsigned int
-      name: valueCount
-    - type: unsigned __int64
-      name: eventKind
-  - name: Dtor
-    offset: 16
-    return_type: Client::UI::Agent::AgentInterface*
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: byte
-      name: freeFlags
-  - name: Show
-    offset: 24
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-  - name: ShowFromLua
-    offset: 32
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: int
-      name: id
-    - type: int*
-      name: args
-    - type: __int64
-      name: argCount
-  - name: Hide
-    offset: 40
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-  - name: IsAgentActive
-    offset: 48
-    return_type: char
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-  - name: Update
-    offset: 56
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: unsigned int
-      name: frameCount
-  - name: IsActivatable
-    offset: 64
-    return_type: char
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-  - name: GetAddonId
-    offset: 72
-    return_type: unsigned int
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-  - name: OnGameEvent
-    offset: 80
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: Client::UI::Agent::AgentGameEvent
-      name: gameEvent
-  - name: OnLevelChange
-    offset: 88
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: byte
-      name: classJobId
-    - type: unsigned __int16
-      name: level
-  - name: OnClassJobChange
-    offset: 96
-    return_type: void
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: byte
-      name: classJobId
-  member_functions:
-  - signature: 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 81 EC ?? ?? ?? ?? 48 8B F9 41 0F B6 E8
-    return_type: void
-    name: OpenRegularDuty
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: unsigned int
-      name: contentsFinderCondition
-    - type: char
-      name: hideIfShown
-  - signature: E9 ?? ?? ?? ?? 8B 93 ?? ?? ?? ?? 48 83 C4 20
-    return_type: void
-    name: OpenRouletteDuty
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-    - type: byte
-      name: roulette
-    - type: char
-      name: hideIfShown
-  - signature: 40 53 48 83 EC ?? 48 8B 01 48 8B D9 FF 50 ?? 84 C0 74 ?? 48 8B CB C6 83
-    return_type: void
-    name: Refresh
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
-  - signature: E8 ?? ?? ?? ?? 41 C6 45 ?? ?? 4C 8D 9C 24
-    return_type: void
-    name: UpdateAddon
-    parameters:
-    - type: Client::UI::Agent::AgentContentsFinder*
-      name: this
 - type: Component::GUI::AtkComponentTextInput
   name: AtkComponentTextInput
   namespace: Component.GUI
@@ -217881,6 +219327,229 @@ structs:
     - type: char
       name: a3
   member_functions: []
+- type: Client::UI::Agent::AgentContentsFinder
+  name: AgentContentsFinder
+  namespace: Client.UI.Agent
+  union: False
+  size: 9304
+  fields:
+  - type: Client::UI::Agent::AgentInterface
+    name: AgentInterface
+    offset: 0
+    base: true
+  - type: Client::UI::Agent::AgentContentsFinderInterface
+    name: InterfaceSub
+    offset: 40
+  - type: Client::UI::Agent::AgentContentsFinderReward
+    name: RewardSub
+    offset: 2216
+  - type: Client::UI::Agent::AgentContentsFinder::RewardContextMenuEventHandler
+    name: RewardContextMenuHandler
+    offset: 7792
+  - type: StdVector<Client::UI::Agent::Contents*>
+    name: ContentList
+    offset: 7832
+  - type: StdVector<Client::UI::Agent::ContentsId>
+    name: SelectedContent
+    offset: 7856
+  - type: Client::UI::Agent::ContentsId
+    name: SelectedDuty
+    offset: 7880
+  - type: byte
+    name: NumCollectedRewards
+    offset: 7896
+  - type: char
+    name: HasRouletteSelected
+    offset: 7897
+  - type: Client::UI::UIModule*
+    name: UIModule
+    offset: 7960
+  - type: Client::System::String::Utf8String
+    name: Strings
+    offset: 7976
+    size: 10
+    is_string: False
+  - type: Client::UI::Agent::ContentsRouletteRole
+    name: ContentRouletteRoleBonuses
+    offset: 9105
+    size: 11
+    is_string: False
+  - type: unsigned int
+    name: DutyPenaltyMinutes
+    offset: 9116
+  - type: unsigned int
+    name: UnkPenaltyMinutes
+    offset: 9120
+  - type: Client::Sound::SoundData*
+    name: TimeCountSoundDataPad
+    offset: 9128
+  - type: Client::Sound::SoundData*
+    name: TimeCountSoundData
+    offset: 9136
+  - type: int
+    name: CurrentTimestamp
+    offset: 9176
+  - type: int
+    name: RecruitingParties
+    offset: 9184
+  - type: byte
+    name: SelectedTab
+    offset: 9188
+  - type: char
+    name: TabChanged
+    offset: 9197
+  - type: char
+    name: ListChanged
+    offset: 9198
+  - type: char
+    name: DetailsChanged
+    offset: 9199
+  virtual_functions:
+  - name: ReceiveEvent
+    offset: 0
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: ReceiveEventWithResult
+    offset: 8
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: Dtor
+    offset: 16
+    return_type: Client::UI::Agent::AgentInterface*
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: Show
+    offset: 24
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+  - name: ShowFromLua
+    offset: 32
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: int
+      name: id
+    - type: int*
+      name: args
+    - type: __int64
+      name: argCount
+  - name: Hide
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+  - name: IsAgentActive
+    offset: 48
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+  - name: Update
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: unsigned int
+      name: frameCount
+  - name: IsActivatable
+    offset: 64
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+  - name: GetAddonId
+    offset: 72
+    return_type: unsigned int
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+  - name: OnGameEvent
+    offset: 80
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: Client::UI::Agent::AgentGameEvent
+      name: gameEvent
+  - name: OnLevelChange
+    offset: 88
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: byte
+      name: classJobId
+    - type: unsigned __int16
+      name: level
+  - name: OnClassJobChange
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: byte
+      name: classJobId
+  member_functions:
+  - signature: 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 81 EC ?? ?? ?? ?? 48 8B F9 41 0F B6 E8
+    return_type: void
+    name: OpenRegularDuty
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: unsigned int
+      name: contentsFinderCondition
+    - type: char
+      name: hideIfShown
+  - signature: E9 ?? ?? ?? ?? 8B 93 ?? ?? ?? ?? 48 83 C4 20
+    return_type: void
+    name: OpenRouletteDuty
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+    - type: byte
+      name: roulette
+    - type: char
+      name: hideIfShown
+  - signature: 40 53 48 83 EC ?? 48 8B 01 48 8B D9 FF 50 ?? 84 C0 74 ?? 48 8B CB C6 83
+    return_type: void
+    name: Refresh
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
+  - signature: E8 ?? ?? ?? ?? 41 C6 45 ?? ?? 4C 8D 9C 24
+    return_type: void
+    name: UpdateAddon
+    parameters:
+    - type: Client::UI::Agent::AgentContentsFinder*
+      name: this
 - type: Client::UI::Agent::AgentMap
   name: AgentMap
   namespace: Client.UI.Agent
@@ -221313,6 +222982,44 @@ structs:
       name: inputId
     - type: char
       name: a3
+  member_functions: []
+- type: Client::UI::Agent::AgentDawnStory::DawnStoryData
+  name: DawnStoryData
+  namespace: Client.UI.Agent
+  union: False
+  size: 422080
+  fields:
+  - type: Client::UI::Agent::AgentDawnInterface::DawnContentData
+    name: ContentData
+    offset: 8
+  - type: Client::UI::Agent::AgentDawnInterface::DawnMemberData
+    name: MemberData
+    offset: 19960
+  - type: Client::UI::Agent::AgentDawnInterface::DawnPartyData
+    name: PartyData
+    offset: 411808
+  - type: unsigned int
+    name: RewardItemCount
+    offset: 411824
+  - type: Client::UI::Agent::AgentDawnStory::DawnRewardItemEntry
+    name: RewardItems
+    offset: 411832
+    size: 2
+    is_string: False
+  - type: Component::GUI::AtkValue
+    name: AtkValues
+    offset: 412072
+    size: 489
+    is_string: False
+  - type: unsigned int
+    name: ModalAddonId
+    offset: 419896
+  - type: unsigned int
+    name: Flags
+    offset: 419900
+  - type: Client::UI::Agent::AgentContentsFinderInterface
+    name: InterfaceSub
+    offset: 419904
   member_functions: []
 - type: Client::UI::Agent::AgentLookingForGroup
   name: AgentLookingForGroup
