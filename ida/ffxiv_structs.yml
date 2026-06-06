@@ -1524,7 +1524,7 @@ enums:
     "Float": 7
     "String": 8
     "WideString": 9
-    "String8": 10
+    "ConstString": 10
     "Vector": 11
     "Pointer": 12
     "AtkValues": 13
@@ -3929,6 +3929,26 @@ enums:
     "Chest": 7
     "Earrings": 8
     "Ears": 18
+- type: Client::Graphics::Physics::CollisionShape
+  name: CollisionShape
+  underlying: byte
+  namespace: Client.Graphics.Physics
+  flags: False
+  values:
+    "Capsule": 0
+    "Ellipsoid": 1
+    "NormalPlane": 2
+    "ThreePointPlane": 3
+    "Sphere": 4
+- type: Client::Graphics::Physics::ConstraintType
+  name: ConstraintType
+  underlying: unsigned int
+  namespace: Client.Graphics.Physics
+  flags: False
+  values:
+    "Spring": 0
+    "Attract": 1
+    "Pin": 2
 - type: Client::Graphics::Kernel::TextureFormat
   name: TextureFormat
   underlying: unsigned int
@@ -4617,6 +4637,7 @@ enums:
     "BNpcPart": 1
     "Pet": 2
     "Buddy": 3
+    "Player": 4
     "Combatant": 5
     "RaceChocobo": 6
     "LovmMinion": 7
@@ -6550,7 +6571,26 @@ enums:
   namespace: Client.Game.Character
   flags: True
   values:
+    "None": 0
     "IsGPoseWet": 1
+- type: Client::Game::Character::EffectContainer::TiltOrigin
+  name: TiltOrigin
+  underlying: byte
+  namespace: Client.Game.Character
+  flags: False
+  values:
+    "Ground": 1
+    "Center": 2
+    "Waist": 3
+    "UpperBody": 4
+- type: Client::Game::Character::EffectContainer::TiltFlags
+  name: TiltFlags
+  underlying: byte
+  namespace: Client.Game.Character
+  flags: True
+  values:
+    "None": 0
+    "ReverseRotation": 1
 - type: Client::Game::Character::LookAtContainer::BannerCameraFollowFlags
   name: BannerCameraFollowFlags
   underlying: byte
@@ -7036,7 +7076,7 @@ enums:
     "Valid": 1
     "InvalidVersion": 2
     "InvalidCustomizeData": 3
-- type: Client::Game::WKS::WKSManager::MissionRank
+- type: Client::Game::WKS::WKSMissionModule::MissionRank
   name: MissionRank
   underlying: int
   namespace: Client.Game.WKS
@@ -11985,6 +12025,25 @@ structs:
   fields: []
   virtual_functions: []
   member_functions: []
+- type: Client::Game::Object::ObjectType
+  name: ObjectType
+  namespace: Client.Game.Object
+  union: False
+  size: 4
+  fields:
+  - type: unsigned int
+    name: Value
+    offset: 0
+    bits:
+    - type: byte
+      offset: 0
+      size: 8
+      name: UnkBits0
+    - type: byte
+      offset: 8
+      size: 8
+      name: PetMirageId
+  member_functions: []
 - type: Client::Game::Object::ReactionEventObjectManager
   name: ReactionEventObjectManager
   namespace: Client.Game.Object
@@ -13431,7 +13490,7 @@ structs:
   name: GatheringNote
   namespace: Client.Game.UI
   union: False
-  size: 1696
+  size: 1832
   fields: []
   member_functions: []
 - type: Client::Game::UI::GuildOrderReward
@@ -14154,9 +14213,12 @@ structs:
   - type: unsigned int
     name: MissionFlag
     offset: 4
-  - type: unsigned __int16
+  - type: byte
     name: Unk8
     offset: 8
+  - type: byte
+    name: Unk9
+    offset: 9
   - type: byte
     name: Condition
     offset: 10
@@ -14179,6 +14241,31 @@ structs:
       name: this
   - name: SetOwnerEvent
     offset: 0
+  member_functions: []
+- type: Client::Game::WKS::WKSMissionModule::MissionState
+  name: MissionState
+  namespace: Client.Game.WKS
+  union: False
+  size: 64
+  fields:
+  - type: unsigned __int16
+    name: MissionUnitRowId
+    offset: 0
+  - type: unsigned __int16
+    name: Score
+    offset: 12
+  - type: Client::Game::WKS::WKSMissionModule::MissionRank
+    name: Rank
+    offset: 16
+  - type: byte
+    name: Unk14
+    offset: 20
+  - type: unsigned __int16
+    name: CollectedTotal
+    offset: 22
+  - type: byte
+    name: CollectedIndividual
+    offset: 24
   member_functions: []
 - type: Client::Game::WKS::WKSModuleBase
   name: WKSModuleBase
@@ -14861,6 +14948,16 @@ structs:
     name: KineDriverResourceHandle
     offset: 0
   member_functions: []
+- type: Client::Graphics::Physics::BonePhysicsUpdater::CollisionObjectJobData
+  name: CollisionObjectJobData
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 8
+  fields:
+  - type: Client::Graphics::Physics::CollisionBase*
+    name: CollisionObject
+    offset: 0
+  member_functions: []
 - type: Client::Graphics::Physics::BonePhysicsUpdater::UpdateBoneSimulatorJobData
   name: UpdateBoneSimulatorJobData
   namespace: Client.Graphics.Physics
@@ -14874,6 +14971,25 @@ structs:
     name: BonePhysicsModule
     offset: 8
   member_functions: []
+- type: Client::Graphics::Physics::ConstraintBase
+  name: ConstraintBase
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 24
+  fields:
+  - type: Client::Graphics::Physics::ConstraintType
+    name: Type
+    offset: 16
+  virtual_functions: []
+  member_functions:
+  - signature: 48 C7 41 ?? ?? ?? ?? ?? 48 89 01 48 8B C1 89 51 ?? C3
+    return_type: Client::Graphics::Physics::ConstraintBase*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::ConstraintBase*
+      name: this
+    - type: Client::Graphics::Physics::ConstraintType
+      name: type
 - type: Client::Graphics::ReferencedClassBase
   name: ReferencedClassBase
   namespace: Client.Graphics
@@ -15367,6 +15483,23 @@ structs:
   - type: Client::System::Resource::Handle::ApricotResourceHandle*
     name: ApricotResourceHandle
     offset: 24
+  member_functions: []
+- type: Client::LayoutEngine::Environment::LayoutEnvironment
+  name: LayoutEnvironment
+  namespace: Client.LayoutEngine.Environment
+  union: False
+  size: 40
+  fields:
+  - type: Client::LayoutEngine::LayoutManager*
+    name: LayoutManager
+    offset: 8
+  - type: Client::Graphics::Scene::EnvScene*
+    name: GraphicsEnvironment
+    offset: 16
+  - type: __int64
+    name: Unk18
+    offset: 24
+  virtual_functions: []
   member_functions: []
 - type: Client::LayoutEngine::FileHeader
   name: FileHeader
@@ -19575,6 +19708,22 @@ structs:
     name: EmnityByte
     offset: 248
   member_functions: []
+- type: Client::UI::AddonPointMenu::TooltipContext
+  name: TooltipContext
+  namespace: Client.UI
+  union: False
+  size: 32
+  fields:
+  - type: Component::GUI::AtkResNode*
+    name: RootNode
+    offset: 8
+  - type: Component::GUI::AtkTextNode*
+    name: TextNode
+    offset: 16
+  - type: Component::GUI::AtkResNode*
+    name: BackgroundNode
+    offset: 24
+  member_functions: []
 - type: Client::UI::AddonPvPCharacter::ClassEntry
   name: ClassEntry
   namespace: Client.UI
@@ -22208,8 +22357,8 @@ structs:
   - type: char
     name: ActiveInList
     offset: 16
-  - type: int
-    name: Unk5
+  - type: char
+    name: LockedInList
     offset: 20
   member_functions: []
 - type: Client::UI::Arrays::EnemyListStringArray::EnemyListEnemyStringArray
@@ -31911,6 +32060,18 @@ structs:
     name: LongCount
     offset: 8
   member_functions: []
+- type: StdMap<int, int>
+  name: StdMap`2
+  namespace: ''
+  union: False
+  fields:
+  - type: RedBlackTree::Node<StdPair<int, int>>*
+    name: Head
+    offset: 0
+  - type: __int64
+    name: LongCount
+    offset: 8
+  member_functions: []
 - type: StdMap<unsigned __int16, Client::Game::HousingObjectManager::HousingObjectData>
   name: StdMap`2
   namespace: ''
@@ -32376,6 +32537,18 @@ structs:
     name: Item1
     offset: 0
   - type: float
+    name: Item2
+    offset: 4
+  member_functions: []
+- type: StdPair<int, int>
+  name: StdPair`2
+  namespace: ''
+  union: False
+  fields:
+  - type: int
+    name: Item1
+    offset: 0
+  - type: int
     name: Item2
     offset: 4
   member_functions: []
@@ -33093,6 +33266,36 @@ structs:
     name: End
     offset: 16
   member_functions: []
+- type: StdVector<Client::Graphics::Physics::CollisionBase*>
+  name: StdVector`1
+  namespace: ''
+  union: False
+  fields:
+  - type: Client::Graphics::Physics::CollisionBase**
+    name: First
+    offset: 0
+  - type: Client::Graphics::Physics::CollisionBase**
+    name: Last
+    offset: 8
+  - type: Client::Graphics::Physics::CollisionBase**
+    name: End
+    offset: 16
+  member_functions: []
+- type: StdVector<Client::Graphics::Physics::ConstraintBase>
+  name: StdVector`1
+  namespace: ''
+  union: False
+  fields:
+  - type: Client::Graphics::Physics::ConstraintBase*
+    name: First
+    offset: 0
+  - type: Client::Graphics::Physics::ConstraintBase*
+    name: Last
+    offset: 8
+  - type: Client::Graphics::Physics::ConstraintBase*
+    name: End
+    offset: 16
+  member_functions: []
 - type: StdVector<Client::LayoutEngine::Group::TimeLineLayoutInstance*>
   name: StdVector`1
   namespace: ''
@@ -33225,6 +33428,21 @@ structs:
     name: Last
     offset: 8
   - type: Client::UI::AddonCharaSelectWorldServer::WorldEntry*
+    name: End
+    offset: 16
+  member_functions: []
+- type: StdVector<Client::UI::AddonPointMenu::Entry*>
+  name: StdVector`1
+  namespace: ''
+  union: False
+  fields:
+  - type: Client::UI::AddonPointMenu::Entry**
+    name: First
+    offset: 0
+  - type: Client::UI::AddonPointMenu::Entry**
+    name: Last
+    offset: 8
+  - type: Client::UI::AddonPointMenu::Entry**
     name: End
     offset: 16
   member_functions: []
@@ -33615,6 +33833,21 @@ structs:
     name: Last
     offset: 8
   - type: Client::UI::Agent::AgentMacro::TextCommandEntry*
+    name: End
+    offset: 16
+  member_functions: []
+- type: StdVector<Client::UI::Agent::AgentPointMenu::PointMenuEntry>
+  name: StdVector`1
+  namespace: ''
+  union: False
+  fields:
+  - type: Client::UI::Agent::AgentPointMenu::PointMenuEntry*
+    name: First
+    offset: 0
+  - type: Client::UI::Agent::AgentPointMenu::PointMenuEntry*
+    name: Last
+    offset: 8
+  - type: Client::UI::Agent::AgentPointMenu::PointMenuEntry*
     name: End
     offset: 16
   member_functions: []
@@ -35064,29 +35297,104 @@ structs:
   - type: Client::Game::Character::EffectContainer::StatusEffect
     name: StatusEffects
     offset: 48
+  - type: byte
+    name: UnkTilt1
+    offset: 49
+  - type: byte
+    name: Unktilt2
+    offset: 50
+  - type: byte
+    name: Unktilt3
+    offset: 51
   - type: int
     name: MountTiltSetupState1
     offset: 52
   - type: int
     name: MountTiltSetupState2
     offset: 56
+  - type: Client::Game::Character::EffectContainer::TiltOrigin
+    name: MountGroundTiltOrigin
+    offset: 60
+  - type: byte
+    name: MountGroundUnk1
+    offset: 61
+  - type: byte
+    name: MountGroundUnk2
+    offset: 62
   - type: float
-    name: GroundTiltAngle
+    name: MountGroundTiltAngle
     offset: 64
   - type: float
-    name: GroundTiltSpeed
+    name: MountGroundTiltSpeed
     offset: 68
+  - type: Client::Game::Character::EffectContainer::TiltFlags
+    name: MountGroundTiltFlags
+    offset: 72
+  - type: Client::Game::Character::EffectContainer::TiltOrigin
+    name: MountFlightSwimTiltOrigin
+    offset: 76
+  - type: byte
+    name: MountFlightSwimUnk1
+    offset: 77
+  - type: byte
+    name: MountFlightSwimUnk2
+    offset: 78
   - type: float
-    name: FlightTiltAngle
+    name: MountFlightSwimTiltAngle
     offset: 80
   - type: float
-    name: FlightTiltSpeed
+    name: MountFlightSwimTiltSpeed
     offset: 84
+  - type: Client::Game::Character::EffectContainer::TiltFlags
+    name: MountFlightSwimTiltFlags
+    offset: 88
+  - type: Client::Game::Character::EffectContainer::TiltOrigin
+    name: RiderGroundTiltOrigin
+    offset: 92
+  - type: byte
+    name: RiderGroundUnk1
+    offset: 93
+  - type: byte
+    name: RiderGroundUnk2
+    offset: 94
+  - type: float
+    name: RiderGroundTiltAngle
+    offset: 96
+  - type: float
+    name: RiderGroundTiltSpeed
+    offset: 100
+  - type: Client::Game::Character::EffectContainer::TiltFlags
+    name: RiderGroundTiltFlags
+    offset: 104
+  - type: Client::Game::Character::EffectContainer::TiltOrigin
+    name: RiderFlightSwimTiltOrigin
+    offset: 108
+  - type: byte
+    name: RiderFlightSwimUnk1
+    offset: 109
+  - type: byte
+    name: RiderFlightSwimUnk2
+    offset: 110
+  - type: float
+    name: RiderFlightSwimTiltAngle
+    offset: 112
+  - type: float
+    name: RiderFlightSwimTiltSpeed
+    offset: 116
+  - type: Client::Game::Character::EffectContainer::TiltFlags
+    name: RiderFlightSwimReverseTilt
+    offset: 120
   virtual_functions: []
   member_functions:
   - signature: 48 89 5C 24 ?? 55 48 83 EC ?? C6 41
     return_type: void
-    name: LoadTiltData
+    name: LoadMountTiltData
+    parameters:
+    - type: Client::Game::Character::EffectContainer*
+      name: this
+  - signature: E8 ?? ?? ?? ?? C6 83 ?? ?? ?? ?? ?? 48 8B 45
+    return_type: void
+    name: LoadPlayerTiltData
     parameters:
     - type: Client::Game::Character::EffectContainer*
       name: this
@@ -39758,6 +40066,38 @@ structs:
       name: this
     - type: char
       name: newState
+- type: Client::Game::WKS::WKSManager::WKSMasterMissionState
+  name: WKSMasterMissionState
+  namespace: Client.Game.WKS
+  union: False
+  size: 16
+  fields:
+  - type: Client::Game::WKS::WKSManager::WKSMissionState
+    name: WKSMissionState
+    offset: 0
+    base: true
+  - type: unsigned int
+    name: UnkC
+    offset: 12
+  member_functions: []
+- type: Client::Game::WKS::WKSManager::WKSMissionClassState
+  name: WKSMissionClassState
+  namespace: Client.Game.WKS
+  union: False
+  size: 44
+  fields:
+  - type: Client::Game::WKS::WKSManager::WKSMissionState
+    name: Missions
+    offset: 0
+    size: 3
+    is_string: False
+  - type: byte
+    name: Unk24
+    offset: 36
+  - type: unsigned int
+    name: Unk26
+    offset: 38
+  member_functions: []
 - type: Client::Game::WKS::WKSMissionModule
   name: WKSMissionModule
   namespace: Client.Game.WKS
@@ -40225,6 +40565,28 @@ structs:
       name: this
     - type: __int64
       name: contents
+- type: Client::Graphics::Physics::BoneCollisions
+  name: BoneCollisions
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 120
+  fields:
+  - type: StdVector<Client::Graphics::Physics::CollisionBase*>
+    name: BoneCollision_1
+    offset: 0
+  - type: StdVector<Client::Graphics::Physics::CollisionBase*>
+    name: BoneCollision_2
+    offset: 24
+  - type: StdVector<Client::Graphics::Physics::CollisionBase*>
+    name: BoneCollision_3
+    offset: 48
+  - type: StdVector<Client::Graphics::Physics::CollisionBase*>
+    name: BoneCollision_4
+    offset: 72
+  - type: StdVector<Client::Graphics::Physics::CollisionBase*>
+    name: BoneCollision_5
+    offset: 96
+  member_functions: []
 - type: Client::Graphics::Physics::BoneKineDriverModule
   name: BoneKineDriverModule
   namespace: Client.Graphics.Physics
@@ -40268,75 +40630,14 @@ structs:
       name: this
     - type: Client::Graphics::Physics::BonePhysicsUpdater::UpdateBoneSimulatorJobData*
       name: data
-- type: Client::Graphics::Physics::BoneSimulator
-  name: BoneSimulator
-  namespace: Client.Graphics.Physics
-  union: False
-  size: 1104
-  fields:
-  - type: Client::Graphics::Physics::BoneSimulator::PhysicsGroup
-    name: Group
-    offset: 16
-  - type: Client::Graphics::Render::Skeleton*
-    name: Skeleton
-    offset: 24
-  - type: Common::Math::Vector3
-    name: CharacterPosition
-    offset: 32
-  - type: Common::Math::Vector3
-    name: Gravity
-    offset: 48
-  - type: Common::Math::Vector3
-    name: Wind
-    offset: 64
-  - type: float
-    name: SimulationTime
-    offset: 80
-  - type: float
-    name: SimulationTimeInv
-    offset: 84
-  - type: char
-    name: IsStarted
-    offset: 246
-  - type: char
-    name: IsStopped
-    offset: 247
-  - type: char
-    name: IsReset
-    offset: 248
-  - type: char
-    name: IsSimulating
-    offset: 1092
-  - type: char
-    name: IsTimeIntegrating
-    offset: 1093
-  - type: char
-    name: IsCollidable
-    offset: 1094
-  virtual_functions: []
-  member_functions:
-  - signature: 40 55 53 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 44 0F 29 94 24
+  - signature: 48 89 5C 24 ?? 57 48 83 EC ?? 48 8B 3A 48 8B 5F
     return_type: void
-    name: Update
+    name: CollisionObjectTask
     parameters:
-    - type: Client::Graphics::Physics::BoneSimulator*
+    - type: Client::Graphics::Physics::BonePhysicsUpdater*
       name: this
-    - type: Client::Graphics::Physics::BonePhysicsModule*
-      name: bonePhysicsModule
-  - signature: 40 53 55 57 41 54 41 56 48 83 EC ?? 4C 89 AC 24
-    return_type: void
-    name: UpdateWithoutIntegration
-    parameters:
-    - type: Client::Graphics::Physics::BoneSimulator*
-      name: this
-    - type: Client::Graphics::Physics::BonePhysicsModule*
-      name: bonePhysicsModule
-  - signature: E8 ?? ?? ?? ?? 48 8B 77 ?? 48 8D 8E
-    return_type: void
-    name: Reset
-    parameters:
-    - type: Client::Graphics::Physics::BoneSimulator*
-      name: this
+    - type: Client::Graphics::Physics::BonePhysicsUpdater::CollisionObjectJobData*
+      name: data
 - type: Client::Graphics::Physics::BoneSimulators
   name: BoneSimulators
   namespace: Client.Graphics.Physics
@@ -40359,6 +40660,83 @@ structs:
     name: BoneSimulator_5
     offset: 96
   member_functions: []
+- type: Client::Graphics::Physics::CollisionBase
+  name: CollisionBase
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 144
+  fields:
+  - type: Client::Graphics::ReferencedClassBase
+    name: ReferencedClassBase
+    offset: 0
+    base: true
+  - type: Client::Graphics::Physics::CollisionShape
+    name: Shape
+    offset: 128
+  virtual_functions: []
+  member_functions:
+  - signature: C7 41 ?? ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 01 48 8B C1
+    return_type: Client::Graphics::Physics::CollisionBase*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::CollisionBase*
+      name: this
+    - type: Client::Graphics::Physics::CollisionShape
+      name: shape
+- type: Client::Graphics::Physics::ConstraintAttract
+  name: ConstraintAttract
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 96
+  fields:
+  - type: Client::Graphics::Physics::ConstraintBase
+    name: ConstraintBase
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 48 8B F0 EB ?? 33 F6 F3 0F 10 44 24
+    return_type: Client::Graphics::Physics::ConstraintAttract*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::ConstraintAttract*
+      name: this
+- type: Client::Graphics::Physics::ConstraintPin
+  name: ConstraintPin
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 80
+  fields:
+  - type: Client::Graphics::Physics::ConstraintBase
+    name: ConstraintBase
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 48 8B F0 48 8B 57
+    return_type: Client::Graphics::Physics::ConstraintPin*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::ConstraintPin*
+      name: this
+- type: Client::Graphics::Physics::ConstraintSpring
+  name: ConstraintSpring
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 56
+  fields:
+  - type: Client::Graphics::Physics::ConstraintBase
+    name: ConstraintBase
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 48 8B F0 EB ?? 33 F6 F3 0F 10 84 24
+    return_type: Client::Graphics::Physics::ConstraintSpring*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::ConstraintSpring*
+      name: this
 - type: Client::Graphics::Ray
   name: Ray
   namespace: Client.Graphics
@@ -45799,6 +46177,31 @@ structs:
     name: NeedsToBeBaked
     offset: 113
   member_functions: []
+- type: Client::UI::AddonPointMenu::Entry
+  name: Entry
+  namespace: Client.UI
+  union: False
+  size: 160
+  fields:
+  - type: Component::GUI::AtkComponentBase*
+    name: Checkbox
+    offset: 24
+  - type: Component::GUI::AtkResNode*
+    name: TitleNode
+    offset: 32
+  - type: Component::GUI::AtkResNode*
+    name: ClickAreaNode
+    offset: 40
+  - type: Client::System::String::Utf8String
+    name: Title
+    offset: 48
+  - type: byte
+    name: IsActive
+    offset: 152
+  - type: byte
+    name: IsHovered
+    offset: 153
+  member_functions: []
 - type: Client::UI::AddonTeleportTownListCallback
   name: AddonTeleportTownListCallback
   namespace: Client.UI
@@ -47183,6 +47586,19 @@ structs:
       name: this
     - type: Client::UI::Agent::AgentId
       name: agentId
+- type: Client::UI::Agent::AgentPointMenu::PointMenuEntry
+  name: PointMenuEntry
+  namespace: Client.UI.Agent
+  union: False
+  size: 136
+  fields:
+  - type: Component::Exd::Sheets::PointMenuChoice
+    name: PointMenuChoiceSheet
+    offset: 0
+  - type: Client::System::String::Utf8String
+    name: Text
+    offset: 32
+  member_functions: []
 - type: Client::UI::Agent::AgentPurify::PurifyItem
   name: PurifyItem
   namespace: Client.UI.Agent
@@ -56784,6 +57200,30 @@ structs:
     name: _Myval
     offset: 32
   member_functions: []
+- type: RedBlackTree::Node<StdPair<int, int>>
+  name: Node
+  namespace: Helper
+  union: False
+  fields:
+  - type: RedBlackTree::Node<StdPair<int, int>>*
+    name: _Left
+    offset: 0
+  - type: RedBlackTree::Node<StdPair<int, int>>*
+    name: _Parent
+    offset: 8
+  - type: RedBlackTree::Node<StdPair<int, int>>*
+    name: _Right
+    offset: 16
+  - type: Helper::RedBlackTreeNodeColor
+    name: _Color
+    offset: 24
+  - type: char
+    name: _Isnil
+    offset: 25
+  - type: StdPair<int, int>
+    name: _Myval
+    offset: 28
+  member_functions: []
 - type: RedBlackTree::Node<StdPair<unsigned __int16, Client::LayoutEngine::Layer::LayerManager*>>
   name: Node
   namespace: Helper
@@ -60949,28 +61389,6 @@ structs:
     name: IsFreeAetheryte
     offset: 28
   member_functions: []
-- type: Client::Game::WKS::WKSManager::WKSJobState
-  name: WKSJobState
-  namespace: Client.Game.WKS
-  union: False
-  size: 328
-  fields:
-  - type: Client::Game::WKS::WKSManager::WKSMissionState
-    name: ExtraBasicMission
-    offset: 176
-  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
-    name: SequentialMissions
-    offset: 192
-  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
-    name: ProvisionalMissions
-    offset: 216
-  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
-    name: CriticalMissions
-    offset: 240
-  - type: unsigned int
-    name: CriticalMissionData
-    offset: 264
-  member_functions: []
 - type: Client::Graphics::Kernel::PVShader
   name: PVShader
   namespace: Client.Graphics.Kernel
@@ -61006,6 +61424,201 @@ structs:
     name: DxbcBlobSize
     offset: 88
   member_functions: []
+- type: Client::Graphics::Physics::BoneSimulator
+  name: BoneSimulator
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 1104
+  fields:
+  - type: Client::Graphics::Physics::BoneSimulator::PhysicsGroup
+    name: Group
+    offset: 16
+  - type: Client::Graphics::Render::Skeleton*
+    name: Skeleton
+    offset: 24
+  - type: Common::Math::Vector3
+    name: CharacterPosition
+    offset: 32
+  - type: Common::Math::Vector3
+    name: Gravity
+    offset: 48
+  - type: Common::Math::Vector3
+    name: Wind
+    offset: 64
+  - type: float
+    name: SimulationTime
+    offset: 80
+  - type: float
+    name: SimulationTimeInv
+    offset: 84
+  - type: unsigned __int16
+    name: ConstraintLoop
+    offset: 108
+  - type: unsigned __int16
+    name: CollisionLoop
+    offset: 110
+  - type: StdVector<Client::Graphics::Physics::ConstraintBase>
+    name: Constraints
+    offset: 144
+  - type: char
+    name: IsStarted
+    offset: 246
+  - type: char
+    name: IsStopped
+    offset: 247
+  - type: char
+    name: IsReset
+    offset: 248
+  - type: char
+    name: IsSimulating
+    offset: 1092
+  - type: char
+    name: IsTimeIntegrating
+    offset: 1093
+  - type: char
+    name: IsCollidable
+    offset: 1094
+  - type: char
+    name: ContinuousCollisions
+    offset: 1095
+  - type: char
+    name: UsingGroundPlane
+    offset: 1096
+  - type: char
+    name: FixedLength
+    offset: 1097
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Client::Graphics::Physics::BoneSimulator*
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: ClearSkeleton
+    offset: 8
+    return_type: void
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 48 8B 74 24 ?? 4C 8B E8
+    return_type: Client::Graphics::Physics::BoneSimulator*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+  - signature: 48 89 5C 24 ?? 57 48 83 EC ?? 48 8D 05 ?? ?? ?? ?? 48 8B D9 48 89 01 48 81 C1 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 93
+    return_type: void
+    name: Finalizer
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+  - signature: 40 55 53 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 44 0F 29 94 24
+    return_type: void
+    name: Update
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+    - type: Client::Graphics::Physics::BonePhysicsModule*
+      name: bonePhysicsModule
+  - signature: 40 53 55 57 41 54 41 56 48 83 EC ?? 4C 89 AC 24
+    return_type: void
+    name: UpdateWithoutIntegration
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+    - type: Client::Graphics::Physics::BonePhysicsModule*
+      name: bonePhysicsModule
+  - signature: E8 ?? ?? ?? ?? 48 8B 77 ?? 48 8D 8E
+    return_type: void
+    name: Reset
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+  - signature: E8 ?? ?? ?? ?? 41 0F B6 44 24 ?? 41 89 45
+    return_type: char
+    name: SetSkeleton
+    parameters:
+    - type: Client::Graphics::Physics::BoneSimulator*
+      name: this
+    - type: Client::Graphics::Render::Skeleton*
+      name: skeleton
+- type: Client::Graphics::Physics::CollisionCapsule
+  name: CollisionCapsule
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 288
+  fields:
+  - type: Client::Graphics::Physics::CollisionBase
+    name: CollisionBase
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 48 8B D8 48 89 5C 24
+    return_type: Client::Graphics::Physics::CollisionCapsule*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::CollisionCapsule*
+      name: this
+- type: Client::Graphics::Physics::CollisionEllipsoid
+  name: CollisionEllipsoid
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 352
+  fields:
+  - type: Client::Graphics::Physics::CollisionBase
+    name: CollisionBase
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: 40 53 48 83 EC ?? B2 ?? 48 8B D9 E8 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 B8 ?? ?? ?? ?? 0F 28 05
+    return_type: Client::Graphics::Physics::CollisionEllipsoid*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::CollisionEllipsoid*
+      name: this
+- type: Client::Graphics::Physics::CollisionPlane
+  name: CollisionPlane
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 224
+  fields:
+  - type: Client::Graphics::Physics::CollisionBase
+    name: CollisionBase
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 B8 ?? ?? ?? ?? 66 89 83 ?? ?? ?? ?? 33 C0
+    return_type: Client::Graphics::Physics::CollisionPlane*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::CollisionPlane*
+      name: this
+    - type: Client::Graphics::Physics::CollisionShape
+      name: shape
+- type: Client::Graphics::Physics::CollisionSphere
+  name: CollisionSphere
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 208
+  fields:
+  - type: Client::Graphics::Physics::CollisionBase
+    name: CollisionBase
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: 40 53 48 83 EC ?? B2 ?? 48 8B D9 E8 ?? ?? ?? ?? 33 C9
+    return_type: Client::Graphics::Physics::CollisionSphere*
+    name: Ctor
+    parameters:
+    - type: Client::Graphics::Physics::CollisionSphere*
+      name: this
 - type: Client::Graphics::Render::Skeleton::Bone
   name: Bone
   namespace: Client.Graphics.Render
@@ -61034,12 +61647,15 @@ structs:
   - type: Client::System::Resource::Handle::ResourceHandle*
     name: AsyncPapResourceHandle
     offset: 264
+  - type: Client::Graphics::Render::Skeleton*
+    name: RenderSkeleton
+    offset: 272
   member_functions: []
 - type: Client::Graphics::Scene::BgObjectStainBuffer
   name: BgObjectStainBuffer
   namespace: Client.Graphics.Scene
   union: False
-  size: 20
+  size: 56
   fields:
   - type: Client::Graphics::ByteColor
     name: SrgbByteColor
@@ -61047,7 +61663,37 @@ structs:
   - type: Common::Math::Vector4
     name: LinearFloatColor
     offset: 4
-  member_functions: []
+  - type: Client::System::Resource::Handle::ResourceHandle*
+    name: LoadedResource
+    offset: 24
+  - type: Client::System::Resource::Handle::ResourceHandle*
+    name: LoadingResource
+    offset: 32
+  - type: byte
+    name: _flags
+    offset: 48
+    bits:
+    - type: byte
+      offset: 0
+      size: 1
+      name: Flag0
+    - type: byte
+      offset: 1
+      size: 1
+      name: Flag1
+    - type: byte
+      offset: 2
+      size: 1
+      name: Flag2
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 48 8B 07 41 0F B6 D6
+    return_type: char
+    name: Initialize
+    parameters:
+    - type: Client::Graphics::Scene::BgObjectStainBuffer*
+      name: this
+    - type: Client::System::Resource::Handle::ModelResourceHandle*
+      name: modelResource
 - type: Client::Graphics::Scene::Human::DrawData
   name: DrawData
   namespace: Client.Graphics.Scene
@@ -61952,6 +62598,314 @@ structs:
     return_type: System::Numerics::Vector4*
     parameters:
     - type: Client::LayoutEngine::Layer::BgPartsLayoutInstance*
+      name: this
+    - type: System::Numerics::Vector4*
+      name: result
+  member_functions: []
+- type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance
+  name: EnvLocationLayoutInstance
+  namespace: Client.LayoutEngine.Layer
+  union: False
+  size: 72
+  fields:
+  - type: Client::LayoutEngine::ILayoutInstance
+    name: ILayoutInstance
+    offset: 0
+    base: true
+  - type: Client::Graphics::Scene::EnvLocation*
+    name: GraphicsObject
+    offset: 48
+  - type: __int64
+    name: Unk38
+    offset: 56
+  - type: int
+    name: Unk40
+    offset: 64
+  - type: unsigned int
+    name: Unk44
+    offset: 68
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Client::LayoutEngine::ILayoutInstance*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: Init
+    offset: 8
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: __int64
+      name: creator
+    - type: byte*
+      name: primaryPath
+  - name: Deinit
+    offset: 16
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: SetProperties
+    offset: 32
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::LayoutEngine::FileLayerGroupInstance*
+      name: data
+  - name: SetLayer
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::LayoutEngine::Layer::LayerManager*
+      name: layer
+  - name: GetSizeOf
+    offset: 48
+    return_type: int
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: GetPrimaryPath
+    offset: 56
+    return_type: char*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: GetTranslation
+    offset: 112
+    return_type: System::Numerics::Vector3*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: System::Numerics::Vector3*
+      name: result
+  - name: GetRotation
+    offset: 120
+    return_type: System::Numerics::Quaternion*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: System::Numerics::Quaternion*
+      name: result
+  - name: GetScale
+    offset: 128
+    return_type: System::Numerics::Vector3*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: System::Numerics::Vector3*
+      name: result
+  - name: GetTransform
+    offset: 136
+    return_type: Client::LayoutEngine::Transform*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::LayoutEngine::Transform*
+      name: result
+  - name: SetTransform
+    offset: 144
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::LayoutEngine::Transform*
+      name: transform
+  - name: HavePrimary
+    offset: 168
+    return_type: char
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: GetGraphics
+    offset: 184
+    return_type: Client::Graphics::Scene::Object*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: GetGraphics2
+    offset: 192
+    return_type: Client::Graphics::Scene::Object*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: SetGraphics
+    offset: 200
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::Graphics::Scene::Object*
+      name: obj
+    - type: Client::LayoutEngine::Transform*
+      name: transform
+  - name: CreatePrimary
+    offset: 216
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::LayoutEngine::Transform*
+      name: transform
+    - type: __int64
+      name: pathOrType
+  - name: DestroyPrimary
+    offset: 224
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: HaveSecondary
+    offset: 232
+    return_type: char
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: IsColliderLoaded
+    offset: 240
+    return_type: char
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: GetSecondaryPath
+    offset: 248
+    return_type: char*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: CreateSecondary
+    offset: 256
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: DestroySecondary
+    offset: 264
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: GetCollider
+    offset: 272
+    return_type: Common::Component::BGCollision::Collider*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: GetCollider2
+    offset: 280
+    return_type: Common::Component::BGCollision::Collider*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: IsColliderActive
+    offset: 288
+    return_type: char
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: SetColliderActive
+    offset: 296
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: char
+      name: active
+  - name: UpdateCollider
+    offset: 304
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: WantToBeActive
+    offset: 440
+    return_type: char
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: ApplyStain
+    offset: 464
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::Graphics::ByteColor*
+      name: stainColorSrgb
+  - name: SetActive
+    offset: 504
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: char
+      name: active
+  - name: GetTranslationImpl
+    offset: 512
+    return_type: System::Numerics::Vector3*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: SetTranslationImpl
+    offset: 520
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: System::Numerics::Vector3*
+      name: value
+  - name: GetRotationImpl
+    offset: 528
+    return_type: System::Numerics::Quaternion*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: SetRotationImpl
+    offset: 536
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: System::Numerics::Quaternion*
+      name: value
+  - name: GetScaleImpl
+    offset: 544
+    return_type: System::Numerics::Vector3*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: SetScaleImpl
+    offset: 552
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: System::Numerics::Vector3*
+      name: value
+  - name: GetTransformImpl
+    offset: 560
+    return_type: Client::LayoutEngine::Transform*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+  - name: SetTransformImpl
+    offset: 568
+    return_type: void
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
+      name: this
+    - type: Client::LayoutEngine::Transform*
+      name: value
+  - name: GetBoundingSphereImpl
+    offset: 576
+    return_type: System::Numerics::Vector4*
+    parameters:
+    - type: Client::LayoutEngine::Layer::EnvLocationLayoutInstance*
       name: this
     - type: System::Numerics::Vector4*
       name: result
@@ -72012,6 +72966,166 @@ structs:
       name: parentAddonId
     - type: unsigned __int64
       name: contentId
+- type: Client::UI::Agent::AgentPointMenu
+  name: AgentPointMenu
+  namespace: Client.UI.Agent
+  union: False
+  size: 72
+  fields:
+  - type: Client::UI::Agent::AgentInterface
+    name: AgentInterface
+    offset: 0
+    base: true
+  - type: Client::UI::Agent::AgentPointMenu::PointMenuContext*
+    name: Context
+    offset: 40
+  - type: StdMap<int, int>*
+    name: CompletionData
+    offset: 48
+  - type: int
+    name: Phase
+    offset: 56
+  - type: int
+    name: SelectedIndex
+    offset: 60
+  - type: unsigned int
+    name: DefaultChoice
+    offset: 64
+  - type: byte
+    name: unkByte44
+    offset: 68
+  virtual_functions:
+  - name: ReceiveEvent
+    offset: 0
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: ReceiveEventWithResult
+    offset: 8
+    return_type: Component::GUI::AtkValue*
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: Component::GUI::AtkValue*
+      name: returnValue
+    - type: Component::GUI::AtkValue*
+      name: values
+    - type: unsigned int
+      name: valueCount
+    - type: unsigned __int64
+      name: eventKind
+  - name: Dtor
+    offset: 16
+    return_type: Client::UI::Agent::AgentInterface*
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: Show
+    offset: 24
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+  - name: ShowFromLua
+    offset: 32
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: int
+      name: id
+    - type: int*
+      name: args
+    - type: __int64
+      name: argCount
+  - name: Hide
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+  - name: IsAgentActive
+    offset: 48
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+  - name: Update
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: unsigned int
+      name: frameCount
+  - name: IsActivatable
+    offset: 64
+    return_type: char
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+  - name: GetAddonId
+    offset: 72
+    return_type: unsigned int
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+  - name: OnGameEvent
+    offset: 80
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: Client::UI::Agent::AgentGameEvent
+      name: gameEvent
+  - name: OnLevelChange
+    offset: 88
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: byte
+      name: classJobId
+    - type: unsigned __int16
+      name: level
+  - name: OnClassJobChange
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: byte
+      name: classJobId
+  member_functions:
+  - signature: 40 55 41 56 41 57 48 83 EC ?? 48 8B 01 45 8B F8
+    return_type: void
+    name: CreateContext
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: int
+      name: pointMenu
+    - type: int
+      name: pointMenuChoiceIdx
+  - signature: E8 ?? ?? ?? ?? FF C3 3B DE 72 F0
+    return_type: void
+    name: SendEntryToAddon
+    parameters:
+    - type: Client::UI::Agent::AgentPointMenu*
+      name: this
+    - type: unsigned int
+      name: index
 - type: Client::UI::Agent::AgentQuickPanel
   name: AgentQuickPanel
   namespace: Client.UI.Agent
@@ -78131,7 +79245,7 @@ structs:
     parameters:
     - type: Common::Component::Excel::ExcelSheet*
       name: this
-  - signature: E8 ?? ?? ?? ?? 48 8B 4F ?? 49 89 44 0E
+  - signature: 48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 48 8B F9 48 8D 74 24
     return_type: Component::Excel::IExcelRowWrapper*
     name: GetRowByDescriptor
     parameters:
@@ -78141,6 +79255,26 @@ structs:
       name: descriptor
     - type: unsigned int*
       name: outErrorCode
+  - signature: E8 ?? ?? ?? ?? 48 8B 4F ?? 49 89 44 0E
+    return_type: Component::Excel::IExcelRowWrapper*
+    name: GetSubRowByDescriptor
+    parameters:
+    - type: Common::Component::Excel::ExcelSheet*
+      name: this
+    - type: Component::Excel::ExcelRowDescriptor*
+      name: descriptor
+    - type: unsigned int*
+      name: outErrorCode
+  - signature: E8 ?? ?? ?? ?? 48 85 C0 74 ?? B0 ?? EB
+    return_type: Component::Excel::IExcelRowWrapper*
+    name: GetRowByIndex
+    parameters:
+    - type: Common::Component::Excel::ExcelSheet*
+      name: this
+    - type: unsigned int
+      name: rowIndex
+    - type: Component::Excel::ExcelRowDescriptor*
+      name: descriptor
   - signature: E8 ?? ?? ?? ?? 8B D3 48 8B F8
     return_type: Component::Excel::IExcelRowWrapper*
     name: GetRowById
@@ -80810,6 +81944,12 @@ structs:
     parameters:
     - type: Client::Game::Object::GameObject*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Object::GameObject*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -80980,8 +82120,6 @@ structs:
       name: outHitPosition
     - type: char*
       name: outModelChecked
-  - name: GetObjectType
-    offset: 24
   - name: UpdateRadius
     offset: 200
   - name: Update
@@ -81577,84 +82715,6 @@ structs:
     - type: Client::Game::WKS::WKSContentInventoryContainer*
       name: this
   member_functions: []
-- type: Client::Game::WKS::WKSManager::WKSState
-  name: WKSState
-  namespace: Client.Game.WKS
-  union: False
-  size: 4232
-  fields:
-  - type: byte
-    name: Unk00
-    offset: 0
-  - type: byte
-    name: Unk01
-    offset: 1
-  - type: int
-    name: ProjectState
-    offset: 4
-  - type: unsigned __int16
-    name: Unk08
-    offset: 8
-  - type: unsigned __int16
-    name: DevGrade
-    offset: 10
-  - type: int
-    name: ProjectTimestamp
-    offset: 12
-  - type: unsigned __int16
-    name: CurrentFateControlRowId
-    offset: 16
-  - type: unsigned __int16
-    name: CurrentFateId
-    offset: 18
-  - type: byte
-    name: Unk14
-    offset: 20
-  - type: byte
-    name: CurrentPlanetIndex
-    offset: 21
-  - type: byte
-    name: LatestPlanetIndex
-    offset: 22
-  - type: Client::Game::WKS::WKSManager::WKSJobState
-    name: JobStates
-    offset: 24
-    size: 11
-    is_string: False
-  - type: unsigned __int16
-    name: CurrentMissionUnitRowId
-    offset: 3632
-  - type: unsigned int
-    name: CurrentScore
-    offset: 3644
-  - type: Client::Game::WKS::WKSManager::MissionRank
-    name: CurrentRank
-    offset: 3648
-  - type: unsigned __int16
-    name: CollectedTotal
-    offset: 3654
-  - type: byte
-    name: CollectedIndividual
-    offset: 3656
-  - type: unsigned int
-    name: FishingBait
-    offset: 3700
-  - type: byte
-    name: MissionCompletionFlags
-    offset: 3713
-    size: 213
-    is_string: False
-  - type: byte
-    name: MissionGoldFlags
-    offset: 3926
-    size: 213
-    is_string: False
-  - type: int
-    name: Scores
-    offset: 4140
-    size: 11
-    is_string: False
-  member_functions: []
 - type: Client::Game::WKS::WKSMechaEventMapMarker
   name: WKSMechaEventMapMarker
   namespace: Client.Game.WKS
@@ -81788,59 +82848,41 @@ structs:
     offset: 112
   virtual_functions: []
   member_functions: []
-- type: Client::Graphics::Physics::BonePhysicsModule
-  name: BonePhysicsModule
+- type: Client::Graphics::Physics::CollisionNormalPlane
+  name: CollisionNormalPlane
   namespace: Client.Graphics.Physics
   union: False
-  size: 1424
+  size: 272
   fields:
-  - type: Common::Math::Matrix4x4
-    name: SkeletonWorldMatrix
-    offset: 16
-  - type: Common::Math::Matrix4x4
-    name: SkeletonInvWorldMatrix
-    offset: 80
-  - type: float
-    name: WindScale
-    offset: 144
-  - type: float
-    name: WindVariation
-    offset: 148
-  - type: Client::Graphics::Render::Skeleton*
-    name: Skeleton
-    offset: 152
-  - type: Client::Graphics::Physics::BoneSimulators
-    name: BoneSimulators
-    offset: 160
-  - type: Client::System::Resource::Handle::ResourceHandle*
-    name: BonePhysicsResourceHandles
-    offset: 400
-    size: 5
-    is_string: False
-  - type: float
-    name: FrameDeltaTime
-    offset: 440
-  - type: float
-    name: OverrideSimulationTime
-    offset: 1400
-  - type: char
-    name: UseOverrideSimulationTime
-    offset: 1416
-  virtual_functions:
-  - name: Dtor
+  - type: Client::Graphics::Physics::CollisionPlane
+    name: CollisionPlane
     offset: 0
+    base: true
+  virtual_functions: []
   member_functions:
-  - signature: E8 ?? ?? ?? ?? 0F 2F C6 76 ?? 48 8B CE
-    return_type: float
-    name: GetSimulationTimeInv
+  - signature: 40 53 48 83 EC ?? B2 ?? 48 8B D9 E8 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 B8 ?? ?? ?? ?? 66 89 83
+    return_type: Client::Graphics::Physics::CollisionNormalPlane*
+    name: Ctor
     parameters:
-    - type: Client::Graphics::Physics::BonePhysicsModule*
+    - type: Client::Graphics::Physics::CollisionNormalPlane*
       name: this
-  - signature: E8 ?? ?? ?? ?? F3 0F 5E F0 F3 0F 11 43
-    return_type: float
-    name: GetSimulationTime
+- type: Client::Graphics::Physics::CollisionThreePointPlane
+  name: CollisionThreePointPlane
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 288
+  fields:
+  - type: Client::Graphics::Physics::CollisionPlane
+    name: CollisionPlane
+    offset: 0
+    base: true
+  virtual_functions: []
+  member_functions:
+  - signature: 40 53 48 83 EC ?? B2 ?? 48 8B D9 E8 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? BA
+    return_type: Client::Graphics::Physics::CollisionThreePointPlane*
+    name: Ctor
     parameters:
-    - type: Client::Graphics::Physics::BonePhysicsModule*
+    - type: Client::Graphics::Physics::CollisionThreePointPlane*
       name: this
 - type: Client::Graphics::Render::Camera
   name: Camera
@@ -86807,6 +87849,37 @@ structs:
       name: this
     - type: byte
       name: classJobId
+  member_functions: []
+- type: Client::UI::Agent::AgentPointMenu::PointMenuContext
+  name: PointMenuContext
+  namespace: Client.UI.Agent
+  union: False
+  size: 320
+  fields:
+  - type: Client::UI::Agent::AgentPointMenu*
+    name: Agent
+    offset: 0
+  - type: __int64
+    name: unk08
+    offset: 8
+  - type: __int64
+    name: unk10
+    offset: 16
+  - type: Common::Component::Excel::ExcelSheetWaiter
+    name: SheetWaiter
+    offset: 24
+  - type: Client::System::String::Utf8String
+    name: TitleText
+    offset: 184
+  - type: StdVector<Client::UI::Agent::AgentPointMenu::PointMenuEntry>
+    name: Entries
+    offset: 288
+  - type: int
+    name: PointMenuId
+    offset: 312
+  - type: char
+    name: IsLoaded
+    offset: 316
   member_functions: []
 - type: Client::UI::Agent::AgentPvpProfile
   name: AgentPvpProfile
@@ -93741,6 +94814,12 @@ structs:
     parameters:
     - type: Client::Game::Object::Aetheryte*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Object::Aetheryte*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -93938,6 +95017,12 @@ structs:
   - name: GetObjectKind
     offset: 16
     return_type: Client::Game::Object::ObjectKind
+    parameters:
+    - type: Client::Game::Object::EventObject*
+      name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
     parameters:
     - type: Client::Game::Object::EventObject*
       name: this
@@ -94182,6 +95267,12 @@ structs:
   - name: GetObjectKind
     offset: 16
     return_type: Client::Game::Object::ObjectKind
+    parameters:
+    - type: Client::Game::Object::Treasure*
+      name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
     parameters:
     - type: Client::Game::Object::Treasure*
       name: this
@@ -94672,7 +95763,7 @@ structs:
   - type: byte
     name: CaughtFish
     offset: 1055
-    size: 189
+    size: 190
     is_string: False
   - type: unsigned int
     name: NumFishCaught
@@ -95256,6 +96347,38 @@ structs:
     - 3
     is_pointer: False
     return_type: Client::Game::UI::PlayerState
+- type: Client::Game::WKS::WKSManager::WKSJobState
+  name: WKSJobState
+  namespace: Client.Game.WKS
+  union: False
+  size: 328
+  fields:
+  - type: Client::Game::WKS::WKSManager::WKSMissionClassState
+    name: MissionClasses
+    offset: 0
+    size: 4
+    is_string: False
+  - type: Client::Game::WKS::WKSManager::WKSMissionState
+    name: ExtraBasicMission
+    offset: 176
+  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
+    name: SequentialMissions
+    offset: 192
+  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
+    name: ProvisionalMissions
+    offset: 216
+  - type: StdVector<Client::Game::WKS::WKSManager::WKSMissionState>
+    name: CriticalMissions
+    offset: 240
+  - type: int
+    name: CriticalMissionTimestamp
+    offset: 264
+  - type: Client::Game::WKS::WKSManager::WKSMasterMissionState
+    name: MasterMissions
+    offset: 272
+    size: 3
+    is_string: False
+  member_functions: []
 - type: Client::Graphics::Render::ModelRenderer
   name: ModelRenderer
   namespace: Client.Graphics.Render
@@ -95827,156 +96950,6 @@ structs:
     - type: Client::Graphics::Scene::Decal*
       name: this
   member_functions: []
-- type: Client::Graphics::Scene::EnvLocation
-  name: EnvLocation
-  namespace: Client.Graphics.Scene
-  union: False
-  size: 1248
-  fields:
-  - type: Client::Graphics::Scene::DrawObject
-    name: DrawObject
-    offset: 0
-    base: true
-  virtual_functions:
-  - name: Dtor
-    offset: 0
-    return_type: Client::Graphics::Scene::Object*
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: byte
-      name: freeFlags
-  - name: CleanupRender
-    offset: 8
-    return_type: void
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-  - name: GetObjectType
-    offset: 16
-    return_type: Client::Graphics::Scene::ObjectType
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-  - name: UpdateRender
-    offset: 32
-    return_type: void
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-  - name: UpdateCulling
-    offset: 48
-    return_type: void
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-  - name: UpdateTransforms
-    offset: 56
-    return_type: void
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: char
-      name: a2_unk
-  - name: UpdateMaterials
-    offset: 88
-    return_type: void
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-  - name: ComputeSphereBounds
-    offset: 96
-    return_type: Common::Math::SphereBounds*
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: Common::Math::SphereBounds*
-      name: outSphereBounds
-  - name: ComputeAxisAlignedBounds
-    offset: 104
-    return_type: Common::Math::AxisAlignedBounds*
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: Common::Math::AxisAlignedBounds*
-      name: outAlignedBounds
-  - name: ComputeOrientedBounds
-    offset: 112
-    return_type: Common::Math::OrientedBounds*
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: Common::Math::OrientedBounds*
-      name: outOrientedBounds
-  - name: HitTestBounds
-    offset: 120
-    return_type: char
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: Client::Graphics::Ray*
-      name: ray
-    - type: Common::Math::Vector3*
-      name: outIntersectionPoint
-  - name: HitTestBoundsNoOutput
-    offset: 128
-    return_type: char
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: Client::Graphics::Ray*
-      name: ray
-  - name: GetAttachBoneWorldTransform
-    offset: 136
-    return_type: Common::Math::Matrix4x4*
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: Common::Math::Matrix4x4*
-      name: outTransform
-    - type: int
-      name: attachBoneIndex
-  - name: GetAttachBoneWorldLocation
-    offset: 144
-    return_type: Common::Math::Vector3*
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: int
-      name: attachBoneIndex
-  - name: GetAttachBoneLocalLocation
-    offset: 152
-    return_type: Common::Math::Vector3*
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: Common::Math::Vector3*
-      name: outLocation
-    - type: int
-      name: attachBoneIndex
-  - name: HasAttachBone
-    offset: 168
-    return_type: char
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: int
-      name: attachBoneIndex
-  - name: SetTransparency
-    offset: 208
-    return_type: void
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-    - type: float
-      name: transparency
-  - name: GetTransparency
-    offset: 216
-    return_type: float
-    parameters:
-    - type: Client::Graphics::Scene::EnvLocation*
-      name: this
-  member_functions: []
 - type: Client::Graphics::Scene::EnvSpace
   name: EnvSpace
   namespace: Client.Graphics.Scene
@@ -95987,6 +96960,12 @@ structs:
     name: DrawObject
     offset: 0
     base: true
+  - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+    name: EnvSetResourceHandle
+    offset: 144
+  - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+    name: SoundSetResourceHandle
+    offset: 152
   - type: Client::Graphics::Scene::EnvLocation*
     name: EnvLocation
     offset: 176
@@ -102412,6 +103391,12 @@ structs:
     parameters:
     - type: Client::Game::Object::ReactionEventObject*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Object::ReactionEventObject*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -102900,6 +103885,81 @@ structs:
     - type: unsigned __int16
       name: value
   member_functions: []
+- type: Client::Graphics::Physics::BonePhysicsModule
+  name: BonePhysicsModule
+  namespace: Client.Graphics.Physics
+  union: False
+  size: 1424
+  fields:
+  - type: Common::Math::Matrix4x4
+    name: SkeletonWorldMatrix
+    offset: 16
+  - type: Common::Math::Matrix4x4
+    name: SkeletonInvWorldMatrix
+    offset: 80
+  - type: float
+    name: WindScale
+    offset: 144
+  - type: float
+    name: WindVariation
+    offset: 148
+  - type: Client::Graphics::Render::Skeleton*
+    name: Skeleton
+    offset: 152
+  - type: Client::Graphics::Physics::BoneSimulators
+    name: BoneSimulators
+    offset: 160
+  - type: Client::Graphics::Physics::BoneCollisions
+    name: BoneCollisions
+    offset: 280
+  - type: Client::System::Resource::Handle::ResourceHandle*
+    name: BonePhysicsResourceHandles
+    offset: 400
+    size: 5
+    is_string: False
+  - type: float
+    name: FrameDeltaTime
+    offset: 440
+  - type: float
+    name: OverrideSimulationTime
+    offset: 1400
+  - type: char
+    name: UseOverrideSimulationTime
+    offset: 1416
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+  member_functions:
+  - signature: E8 ?? ?? ?? ?? 0F 2F C6 76 ?? 48 8B CE
+    return_type: float
+    name: GetSimulationTimeInv
+    parameters:
+    - type: Client::Graphics::Physics::BonePhysicsModule*
+      name: this
+  - signature: E8 ?? ?? ?? ?? F3 0F 5E F0 F3 0F 11 43
+    return_type: float
+    name: GetSimulationTime
+    parameters:
+    - type: Client::Graphics::Physics::BonePhysicsModule*
+      name: this
+  - signature: E8 ?? ?? ?? ?? 48 8D 7F ?? 48 83 EB ?? 75 ?? 48 8B 45
+    return_type: void
+    name: CreateJobData
+    parameters:
+    - type: Client::Graphics::Physics::BonePhysicsModule*
+      name: this
+    - type: Client::Graphics::Physics::BonePhysicsUpdater*
+      name: updater
+  - signature: E8 ?? ?? ?? ?? 48 8B 03 48 8B CB FF C6
+    return_type: void
+    name: Load
+    parameters:
+    - type: Client::Graphics::Physics::BonePhysicsModule*
+      name: this
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: handle
+    - type: unsigned int
+      name: resourceIndex
 - type: Client::Graphics::Render::Light
   name: Light
   namespace: Client.Graphics.Render
@@ -102997,6 +104057,194 @@ structs:
     name: SkeletonResourceHandle
     offset: 400
   member_functions: []
+- type: Client::Graphics::Scene::EnvLocation
+  name: EnvLocation
+  namespace: Client.Graphics.Scene
+  union: False
+  size: 1248
+  fields:
+  - type: Client::Graphics::Scene::DrawObject
+    name: DrawObject
+    offset: 0
+    base: true
+  - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+    name: AmbientSetResource
+    offset: 144
+  - type: Client::System::Resource::Handle::TextureResourceHandle*
+    name: EnvironmentCubemapResource
+    offset: 152
+  - type: __int64
+    name: AmbientSet
+    offset: 160
+  - type: Client::Graphics::Kernel::Texture*
+    name: EnvironmentCubemap
+    offset: 168
+  - type: float
+    name: UnkB0
+    offset: 176
+  - type: byte
+    name: UnkB8
+    offset: 184
+  - type: unsigned __int16
+    name: UnkB9
+    offset: 185
+  - type: Client::System::File::FileAccessPath
+    name: AmbientSetResourcePath
+    offset: 192
+  - type: Client::System::File::FileAccessPath
+    name: EnvironmentCubemapResourcePath
+    offset: 720
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Client::Graphics::Scene::Object*
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: CleanupRender
+    offset: 8
+    return_type: void
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+  - name: GetObjectType
+    offset: 16
+    return_type: Client::Graphics::Scene::ObjectType
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+  - name: UpdateRender
+    offset: 32
+    return_type: void
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+  - name: UpdateCulling
+    offset: 48
+    return_type: void
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+  - name: UpdateTransforms
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: char
+      name: a2_unk
+  - name: UpdateMaterials
+    offset: 88
+    return_type: void
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+  - name: ComputeSphereBounds
+    offset: 96
+    return_type: Common::Math::SphereBounds*
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: Common::Math::SphereBounds*
+      name: outSphereBounds
+  - name: ComputeAxisAlignedBounds
+    offset: 104
+    return_type: Common::Math::AxisAlignedBounds*
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: Common::Math::AxisAlignedBounds*
+      name: outAlignedBounds
+  - name: ComputeOrientedBounds
+    offset: 112
+    return_type: Common::Math::OrientedBounds*
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: Common::Math::OrientedBounds*
+      name: outOrientedBounds
+  - name: HitTestBounds
+    offset: 120
+    return_type: char
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: Client::Graphics::Ray*
+      name: ray
+    - type: Common::Math::Vector3*
+      name: outIntersectionPoint
+  - name: HitTestBoundsNoOutput
+    offset: 128
+    return_type: char
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: Client::Graphics::Ray*
+      name: ray
+  - name: GetAttachBoneWorldTransform
+    offset: 136
+    return_type: Common::Math::Matrix4x4*
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: Common::Math::Matrix4x4*
+      name: outTransform
+    - type: int
+      name: attachBoneIndex
+  - name: GetAttachBoneWorldLocation
+    offset: 144
+    return_type: Common::Math::Vector3*
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: int
+      name: attachBoneIndex
+  - name: GetAttachBoneLocalLocation
+    offset: 152
+    return_type: Common::Math::Vector3*
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: Common::Math::Vector3*
+      name: outLocation
+    - type: int
+      name: attachBoneIndex
+  - name: HasAttachBone
+    offset: 168
+    return_type: char
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: int
+      name: attachBoneIndex
+  - name: SetTransparency
+    offset: 208
+    return_type: void
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+    - type: float
+      name: transparency
+  - name: GetTransparency
+    offset: 216
+    return_type: float
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: this
+  member_functions: []
+  static_member_functions:
+  - signature: 40 53 48 83 EC 20 83 3D ?? ?? ?? ?? ?? 7D 4E
+    return_type: Client::Graphics::Scene::EnvLocation*
+    name: TryCreate
+    parameters: []
+  - signature: E9 ?? ?? ?? ?? 48 83 C4 20 5B C3 CC CC CC CC CC CC C2 00 00
+    return_type: void
+    name: TryDestroy
+    parameters:
+    - type: Client::Graphics::Scene::EnvLocation**
+      name: locationPointer
 - type: Client::Graphics::Scene::EnvScene
   name: EnvScene
   namespace: Client.Graphics.Scene
@@ -103013,8 +104261,36 @@ structs:
     offset: 240
     size: 8
     is_string: False
+  - type: Client::Graphics::Scene::EnvLocation**
+    name: Locations
+    offset: 2176
+  - type: unsigned int
+    name: LocationCount
+    offset: 2184
+  - type: Client::Graphics::Kernel::Texture*
+    name: CubemapArray
+    offset: 2256
+  - type: Client::Graphics::Kernel::ConstantBuffer*
+    name: ConstantBuffer
+    offset: 2264
   virtual_functions: []
-  member_functions: []
+  member_functions:
+  - signature: 4C 8B D1 48 85 D2 74 3F
+    return_type: char
+    name: AddLocation
+    parameters:
+    - type: Client::Graphics::Scene::EnvScene*
+      name: this
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: location
+  - signature: 4C 8B D1 48 85 D2 74 25 44 8B 81
+    return_type: char
+    name: RemoveLocation
+    parameters:
+    - type: Client::Graphics::Scene::EnvScene*
+      name: this
+    - type: Client::Graphics::Scene::EnvLocation*
+      name: location
 - type: Client::Graphics::Scene::VfxObject
   name: VfxObject
   namespace: Client.Graphics.Scene
@@ -103040,6 +104316,12 @@ structs:
   - type: byte
     name: SomeFlags
     offset: 584
+  - type: float
+    name: Speed
+    offset: 592
+  - type: float
+    name: FadeOutFrames
+    offset: 600
   - type: Common::Math::Vector4
     name: Color
     offset: 608
@@ -111082,6 +112364,12 @@ structs:
     parameters:
     - type: Client::Game::Object::GatheringPointObject*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Object::GatheringPointObject*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -111283,6 +112571,12 @@ structs:
   - name: GetObjectKind
     offset: 16
     return_type: Client::Game::Object::ObjectKind
+    parameters:
+    - type: Client::Game::Object::HousingObject*
+      name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
     parameters:
     - type: Client::Game::Object::HousingObject*
       name: this
@@ -111784,96 +113078,72 @@ structs:
     - type: Client::Game::InventoryType
       name: inventoryType
   member_functions: []
-- type: Client::Game::WKS::WKSManager
-  name: WKSManager
+- type: Client::Game::WKS::WKSManager::WKSState
+  name: WKSState
   namespace: Client.Game.WKS
   union: False
-  size: 4688
+  size: 4232
   fields:
-  - type: Client::Game::Character::CharacterManagerInterface
-    name: CharacterManagerInterface
+  - type: byte
+    name: Unk00
     offset: 0
-    base: true
+  - type: byte
+    name: Unk01
+    offset: 1
+  - type: int
+    name: ProjectState
+    offset: 4
   - type: unsigned __int16
-    name: TerritoryId
+    name: Unk08
+    offset: 8
+  - type: unsigned __int16
+    name: DevGrade
+    offset: 10
+  - type: int
+    name: ProjectTimestamp
+    offset: 12
+  - type: unsigned __int16
+    name: CurrentFateControlRowId
+    offset: 16
+  - type: unsigned __int16
+    name: CurrentFateId
+    offset: 18
+  - type: byte
+    name: Unk14
+    offset: 20
+  - type: byte
+    name: CurrentPlanetIndex
+    offset: 21
+  - type: byte
+    name: LatestPlanetIndex
+    offset: 22
+  - type: Client::Game::WKS::WKSManager::WKSJobState
+    name: JobStates
     offset: 24
-  - type: char
-    name: IsLoaded
-    offset: 26
-  - type: Client::Game::WKS::WKSManager::WKSState
-    name: State
-    offset: 80
-  - type: __int64
-    name: UnkStruct10F8
-    offset: 4344
-  - type: __int64
-    name: UnkStruct1100
-    offset: 4352
-  - type: Client::Game::WKS::WKSMechaEventModule*
-    name: MechaEventModule
-    offset: 4360
-  - type: __int64
-    name: UnkStruct1110
-    offset: 4368
-  - type: __int64
-    name: UnkStruct1118
-    offset: 4376
-  - type: __int64
-    name: EmergencyInfoModule
-    offset: 4384
-  - type: __int64
-    name: UnkStruct1128
-    offset: 4392
-  - type: __int64
-    name: UnkStruct1130
-    offset: 4400
-  - type: Client::Game::WKS::WKSMissionModule*
-    name: MissionModule
-    offset: 4408
-  - type: Client::Game::WKS::WKSResearchModule*
-    name: ResearchModule
-    offset: 4416
-  - type: __int64
-    name: UnkStruct1148
-    offset: 4424
-  - type: __int64
-    name: UnkStruct1150
-    offset: 4432
-  - type: StdVector<Client::Game::WKS::WKSModuleBase*>
-    name: Modules
-    offset: 4440
-  virtual_functions:
-  - name: Dtor
-    offset: 40
-    return_type: Client::Game::Character::CharacterManagerInterface*
-    parameters:
-    - type: Client::Game::WKS::WKSManager*
-      name: this
-    - type: byte
-      name: freeFlags
-  member_functions:
-  - signature: 48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 0F B7 DA 48 8B F9 E8 ?? ?? ?? ?? 8B CB
-    return_type: void
-    name: Load
-    parameters:
-    - type: Client::Game::WKS::WKSManager*
-      name: this
-    - type: unsigned __int16
-      name: territoryId
-  - signature: E8 ?? ?? ?? ?? 0F B6 F8 49 8B 4E
-    return_type: char
-    name: IsFunctionUnlocked
-    parameters:
-    - type: Client::Game::WKS::WKSManager*
-      name: this
-    - type: byte
-      name: functionRowId
-  static_members:
-  - signature: 48 89 05 ?? ?? ?? ?? 48 8B F8
-    relative_follow_offsets:
-    - 3
-    is_pointer: True
-    return_type: Client::Game::WKS::WKSManager
+    size: 11
+    is_string: False
+  - type: Client::Game::WKS::WKSMissionModule::MissionState
+    name: CurrentMission
+    offset: 3632
+  - type: unsigned int
+    name: FishingBait
+    offset: 3700
+  - type: byte
+    name: MissionCompletionFlags
+    offset: 3713
+    size: 213
+    is_string: False
+  - type: byte
+    name: MissionGoldFlags
+    offset: 3926
+    size: 213
+    is_string: False
+  - type: int
+    name: Scores
+    offset: 4140
+    size: 11
+    is_string: False
+  member_functions: []
 - type: Client::Game::WKS::WKSMechaEvent
   name: WKSMechaEvent
   namespace: Client.Game.WKS
@@ -114943,7 +116213,7 @@ structs:
       name: digits
     - type: char
       name: addZeroPadding
-  - signature: E8 ?? ?? ?? ?? 48 83 C4 28 5F 5D
+  - signature: 48 85 C9 0F 84 ?? ?? ?? ?? 55 48 83 EC ?? B2
     return_type: void
     name: ResizeNodeForCurrentText
     parameters:
@@ -115758,6 +117028,12 @@ structs:
     parameters:
     - type: Client::Game::Object::HousingEventObject*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Object::HousingEventObject*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -116455,6 +117731,98 @@ structs:
     - type: System::Numerics::Vector4*
       name: result
   member_functions: []
+- type: Client::System::Resource::Handle::AmbientSetResourceHandle
+  name: AmbientSetResourceHandle
+  namespace: Client.System.Resource.Handle
+  union: False
+  size: 200
+  fields:
+  - type: Client::System::Resource::Handle::DefaultResourceHandle
+    name: DefaultResourceHandle
+    offset: 0
+    base: true
+  virtual_functions:
+  - name: GetUserData
+    offset: 48
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+  - name: GetHandleSize
+    offset: 120
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+  - name: GetLength
+    offset: 136
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+  - name: GetBlobAlignment
+    offset: 152
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+  - name: GetData
+    offset: 184
+    return_type: byte*
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+  - name: Close
+    offset: 200
+    return_type: void
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+  - name: LoadIntoKernel
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+  - name: Read
+    offset: 256
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: Load
+    offset: 264
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+    - type: __int64
+      name: contents
+    - type: byte
+      name: lastIOResult
+  - name: Reread
+    offset: 272
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: LoadDependentResources
+    offset: 320
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::AmbientSetResourceHandle*
+      name: this
+    - type: byte
+      name: loadResult
+  member_functions: []
 - type: Client::System::Resource::Handle::ApricotResourceHandle
   name: ApricotResourceHandle
   namespace: Client.System.Resource.Handle
@@ -116543,6 +117911,190 @@ structs:
     return_type: byte
     parameters:
     - type: Client::System::Resource::Handle::ApricotResourceHandle*
+      name: this
+    - type: byte
+      name: loadResult
+  member_functions: []
+- type: Client::System::Resource::Handle::BonePhysicsResourceHandle
+  name: BonePhysicsResourceHandle
+  namespace: Client.System.Resource.Handle
+  union: False
+  size: 288
+  fields:
+  - type: Client::System::Resource::Handle::DefaultResourceHandle
+    name: DefaultResourceHandle
+    offset: 0
+    base: true
+  virtual_functions:
+  - name: GetUserData
+    offset: 48
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+  - name: GetHandleSize
+    offset: 120
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+  - name: GetLength
+    offset: 136
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+  - name: GetBlobAlignment
+    offset: 152
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+  - name: GetData
+    offset: 184
+    return_type: byte*
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+  - name: Close
+    offset: 200
+    return_type: void
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+  - name: LoadIntoKernel
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+  - name: Read
+    offset: 256
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: Load
+    offset: 264
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+    - type: __int64
+      name: contents
+    - type: byte
+      name: lastIOResult
+  - name: Reread
+    offset: 272
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: LoadDependentResources
+    offset: 320
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::BonePhysicsResourceHandle*
+      name: this
+    - type: byte
+      name: loadResult
+  member_functions: []
+- type: Client::System::Resource::Handle::EnvSetResourceHandle
+  name: EnvSetResourceHandle
+  namespace: Client.System.Resource.Handle
+  union: False
+  size: 200
+  fields:
+  - type: Client::System::Resource::Handle::DefaultResourceHandle
+    name: DefaultResourceHandle
+    offset: 0
+    base: true
+  virtual_functions:
+  - name: GetUserData
+    offset: 48
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+  - name: GetHandleSize
+    offset: 120
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+  - name: GetLength
+    offset: 136
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+  - name: GetBlobAlignment
+    offset: 152
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+  - name: GetData
+    offset: 184
+    return_type: byte*
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+  - name: Close
+    offset: 200
+    return_type: void
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+  - name: LoadIntoKernel
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+  - name: Read
+    offset: 256
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: Load
+    offset: 264
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+    - type: __int64
+      name: contents
+    - type: byte
+      name: lastIOResult
+  - name: Reread
+    offset: 272
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: LoadDependentResources
+    offset: 320
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::EnvSetResourceHandle*
       name: this
     - type: byte
       name: loadResult
@@ -117015,6 +118567,98 @@ structs:
     return_type: byte
     parameters:
     - type: Client::System::Resource::Handle::SharedGroupResourceHandle*
+      name: this
+    - type: byte
+      name: loadResult
+  member_functions: []
+- type: Client::System::Resource::Handle::SoundSetResourceHandle
+  name: SoundSetResourceHandle
+  namespace: Client.System.Resource.Handle
+  union: False
+  size: 200
+  fields:
+  - type: Client::System::Resource::Handle::DefaultResourceHandle
+    name: DefaultResourceHandle
+    offset: 0
+    base: true
+  virtual_functions:
+  - name: GetUserData
+    offset: 48
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+  - name: GetHandleSize
+    offset: 120
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+  - name: GetLength
+    offset: 136
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+  - name: GetBlobAlignment
+    offset: 152
+    return_type: unsigned __int64
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+  - name: GetData
+    offset: 184
+    return_type: byte*
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+  - name: Close
+    offset: 200
+    return_type: void
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+  - name: LoadIntoKernel
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+  - name: Read
+    offset: 256
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: Load
+    offset: 264
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+    - type: __int64
+      name: contents
+    - type: byte
+      name: lastIOResult
+  - name: Reread
+    offset: 272
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
+      name: this
+    - type: Client::System::File::FileDescriptor*
+      name: fileDescriptor
+    - type: char
+      name: failedToOpen
+  - name: LoadDependentResources
+    offset: 320
+    return_type: byte
+    parameters:
+    - type: Client::System::Resource::Handle::SoundSetResourceHandle*
       name: this
     - type: byte
       name: loadResult
@@ -117620,7 +119264,7 @@ structs:
       name: this
     - type: byte
       name: rowId
-  - signature: E8 ?? ?? ?? ?? 49 63 47 ?? 49 8D 4F
+  - signature: E8 ?? ?? ?? ?? 84 C0 75 ?? 48 8D 8B ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 03
     return_type: char
     name: LoadContentRoulette
     parameters:
@@ -121333,6 +122977,12 @@ structs:
     parameters:
     - type: Client::Game::Object::HousingCombinedObject*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Object::HousingCombinedObject*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -122810,6 +124460,96 @@ structs:
     name: Type
     offset: 164
   member_functions: []
+- type: Client::Game::WKS::WKSManager
+  name: WKSManager
+  namespace: Client.Game.WKS
+  union: False
+  size: 4688
+  fields:
+  - type: Client::Game::Character::CharacterManagerInterface
+    name: CharacterManagerInterface
+    offset: 0
+    base: true
+  - type: unsigned __int16
+    name: TerritoryId
+    offset: 24
+  - type: char
+    name: IsLoaded
+    offset: 26
+  - type: Client::Game::WKS::WKSManager::WKSState
+    name: State
+    offset: 80
+  - type: __int64
+    name: LivelyActorGroupTable
+    offset: 4344
+  - type: __int64
+    name: SharedGroupModule
+    offset: 4352
+  - type: Client::Game::WKS::WKSMechaEventModule*
+    name: MechaEventModule
+    offset: 4360
+  - type: __int64
+    name: JobStateModule
+    offset: 4368
+  - type: __int64
+    name: AchievementModule
+    offset: 4376
+  - type: __int64
+    name: EmergencyModule
+    offset: 4384
+  - type: __int64
+    name: FortuneModule
+    offset: 4392
+  - type: __int64
+    name: PraiseHologramModule
+    offset: 4400
+  - type: Client::Game::WKS::WKSMissionModule*
+    name: MissionModule
+    offset: 4408
+  - type: Client::Game::WKS::WKSResearchModule*
+    name: ResearchModule
+    offset: 4416
+  - type: __int64
+    name: LogModule
+    offset: 4424
+  - type: __int64
+    name: TreasureModule
+    offset: 4432
+  - type: StdVector<Client::Game::WKS::WKSModuleBase*>
+    name: Modules
+    offset: 4440
+  virtual_functions:
+  - name: Dtor
+    offset: 40
+    return_type: Client::Game::Character::CharacterManagerInterface*
+    parameters:
+    - type: Client::Game::WKS::WKSManager*
+      name: this
+    - type: byte
+      name: freeFlags
+  member_functions:
+  - signature: 48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 0F B7 DA 48 8B F9 E8 ?? ?? ?? ?? 8B CB
+    return_type: void
+    name: Load
+    parameters:
+    - type: Client::Game::WKS::WKSManager*
+      name: this
+    - type: unsigned __int16
+      name: territoryId
+  - signature: E8 ?? ?? ?? ?? 0F B6 F8 49 8B 4E
+    return_type: char
+    name: IsFunctionUnlocked
+    parameters:
+    - type: Client::Game::WKS::WKSManager*
+      name: this
+    - type: byte
+      name: functionRowId
+  static_members:
+  - signature: 48 89 05 ?? ?? ?? ?? 48 8B F8
+    relative_follow_offsets:
+    - 3
+    is_pointer: True
+    return_type: Client::Game::WKS::WKSManager
 - type: Client::System::Resource::Handle::SkeletonResourceHandle
   name: SkeletonResourceHandle
   namespace: Client.System.Resource.Handle
@@ -126556,6 +128296,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::EventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -160148,6 +161898,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::CraftEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -160296,6 +162056,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::GatheringEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -160438,6 +162208,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::TripleTriadEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -172994,6 +174774,433 @@ structs:
     - type: char
       name: a3
   member_functions: []
+- type: Client::UI::AddonPointMenu
+  name: AddonPointMenu
+  namespace: Client.UI
+  union: False
+  size: 608
+  fields:
+  - type: Component::GUI::AtkUnitBase
+    name: AtkUnitBase
+    offset: 0
+    base: true
+  - type: StdVector<Client::UI::AddonPointMenu::Entry*>
+    name: Entries
+    offset: 568
+  - type: Client::UI::AddonPointMenu::TooltipContext*
+    name: TooltipContextData
+    offset: 592
+  - type: int
+    name: PendingFocusIndex
+    offset: 600
+  virtual_functions:
+  - name: Dtor
+    offset: 0
+    return_type: Component::GUI::AtkEventListener*
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: byte
+      name: freeFlags
+  - name: ReceiveGlobalEvent
+    offset: 8
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: ReceiveEvent
+    offset: 16
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: Component::GUI::AtkEventType
+      name: eventType
+    - type: int
+      name: eventParam
+    - type: Component::GUI::AtkEvent*
+      name: atkEvent
+    - type: Component::GUI::AtkEventData*
+      name: atkEventData
+  - name: Open
+    offset: 24
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: unsigned int
+      name: depthLayer
+  - name: Close
+    offset: 32
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: char
+      name: fireCallback
+  - name: Show
+    offset: 40
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: char
+      name: disableShowTransition
+    - type: unsigned int
+      name: unsetShowHideFlags
+  - name: Hide
+    offset: 48
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: char
+      name: disableHideTransition
+    - type: char
+      name: callCloseCallback
+    - type: unsigned int
+      name: setShowHideFlags
+  - name: SetPosition
+    offset: 56
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: SetX
+    offset: 64
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: __int16
+      name: value
+  - name: SetY
+    offset: 72
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: __int16
+      name: value
+  - name: GetX
+    offset: 80
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: GetY
+    offset: 88
+    return_type: __int16
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: GetPosition
+    offset: 96
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: __int16*
+      name: outX
+    - type: __int16*
+      name: outY
+  - name: SetAlpha
+    offset: 104
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: byte
+      name: alpha
+  - name: SetScale
+    offset: 112
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: float
+      name: scale
+    - type: char
+      name: a3
+  - name: GetSize
+    offset: 120
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: unsigned __int16*
+      name: outWidth
+    - type: unsigned __int16*
+      name: outHeight
+    - type: char
+      name: scaled
+  - name: Hide2
+    offset: 128
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: SetScaleToHudLayoutScale
+    offset: 136
+    return_type: __int8
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: ShouldCollideWithWindow
+    offset: 144
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: Component::GUI::AtkCollisionNode*
+      name: collisionNode
+  - name: OnMove
+    offset: 160
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: HandleCursorTypeChange
+    offset: 176
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: ShouldIgnoreInputs
+    offset: 184
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: GetRootNode
+    offset: 192
+    return_type: Component::GUI::AtkResNode*
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: GetWindowBounds
+    offset: 216
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: GetRootBounds
+    offset: 240
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: Common::Math::Bounds*
+      name: outBounds
+  - name: SetDepthLayer
+    offset: 248
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: unsigned int
+      name: depthLayerIndex
+  - name: ShouldAllowCursorFocus
+    offset: 256
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: GetUnitBaseForFocus
+    offset: 280
+    return_type: Component::GUI::AtkUnitBase*
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: Focus
+    offset: 296
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: Initialize
+    offset: 328
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: Finalizer
+    offset: 336
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: Update
+    offset: 344
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: float
+      name: delta
+  - name: Draw
+    offset: 352
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: LoadUldResourceHandle
+    offset: 368
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: CheckWindowCollisionAtCoords
+    offset: 376
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: __int16
+      name: x
+    - type: __int16
+      name: y
+  - name: OnSetup
+    offset: 392
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRefresh
+    offset: 408
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: unsigned int
+      name: valueCount
+    - type: Component::GUI::AtkValue*
+      name: values
+  - name: OnRequestedUpdate
+    offset: 416
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: Component::GUI::NumberArrayData**
+      name: numberArrayData
+    - type: Component::GUI::StringArrayData**
+      name: stringArrayData
+  - name: FireCloseCallback
+    offset: 432
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: SetSizeFromConfig
+    offset: 448
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: float
+      name: width
+    - type: float
+      name: height
+  - name: HandleCustomInput
+    offset: 456
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: Component::GUI::AtkEventData::AtkInputData*
+      name: inputData
+  - name: OnFocusChange
+    offset: 472
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: char
+      name: isFocused
+  - name: OnScreenSizeChange
+    offset: 480
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: int
+      name: width
+    - type: int
+      name: height
+  - name: OnConfigLoaded
+    offset: 488
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: char
+      name: isInitialLoad
+  - name: OnMouseOver
+    offset: 496
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: OnMouseOut
+    offset: 504
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: IsFullyLoaded
+    offset: 528
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+  - name: PlaySoundEffect
+    offset: 536
+    return_type: void
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: int
+      name: soundEffectId
+  - name: HandleDPadInput
+    offset: 552
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  - name: HandleBackButtonInput
+    offset: 568
+    return_type: char
+    parameters:
+    - type: Client::UI::AddonPointMenu*
+      name: this
+    - type: int
+      name: inputId
+    - type: char
+      name: a3
+  member_functions: []
 - type: Client::UI::AddonReconstructionBox
   name: AddonReconstructionBox
   namespace: Client.UI
@@ -179032,6 +181239,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::FishingEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -179177,6 +181394,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::GatheringPointEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -179340,6 +181567,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::HwdDevEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -188943,6 +191180,9 @@ structs:
   - type: Client::Graphics::Render::VerticalFogRenderer
     name: VerticalFogRenderer
     offset: 190736
+  - type: char
+    name: Is3DRenderingDisabled
+    offset: 230232
   virtual_functions: []
   member_functions: []
   static_members:
@@ -201691,6 +203931,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::ShopEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -201862,6 +204112,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::MJI::MJIPastureHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -205651,6 +207911,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::LuaEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -217125,6 +219395,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::AetheryteEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -217267,6 +219547,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::CraftLeveClientEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -217410,6 +219700,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::CustomTalkEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -217552,6 +219852,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::CustomTalkResidentEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -217694,6 +220004,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::ExitRangeEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -217926,6 +220246,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::QuestEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -220026,6 +222356,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::Director*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -220176,6 +222516,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::GroupPoseEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -220318,6 +222668,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::IdleCameraEventHandler*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -223309,6 +225669,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::GoldSaucerDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -223485,6 +225855,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::LeveDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -223647,6 +226027,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Fate::FateDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -223991,6 +226381,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::Event::BattleLeveDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -224181,6 +226581,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::GoldSaucer::GFateDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -224338,6 +226748,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::MassivePcContent::MassivePcContentDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -225045,6 +227465,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::ContentDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -225762,6 +228192,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::InstanceContentDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -225941,6 +228381,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::PublicContentDirector*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -226131,6 +228581,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::PublicContentEureka*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -226379,6 +228839,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::InstanceContentDeepDungeon*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -226626,6 +229096,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::InstanceContentOceanFishing*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -227077,6 +229557,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::PublicContentBozja*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -227644,6 +230134,16 @@ structs:
       name: actionTimelineId
     - type: unsigned __int64
       name: callbackParam
+  - name: CancelByPlayerMovement
+    offset: 560
+    return_type: void
+    parameters:
+    - type: Client::Game::InstanceContent::PublicContentOccultCrescent*
+      name: this
+    - type: char
+      name: a2
+    - type: char
+      name: a3
   - name: CancelInteraction
     offset: 1272
     return_type: void
@@ -228104,6 +230604,9 @@ structs:
   - type: unsigned int
     name: CompanionOwnerId
     offset: 9028
+  - type: Client::Game::Object::ObjectType
+    name: ObjectType
+    offset: 9032
   - type: unsigned __int64
     name: AccountId
     offset: 9040
@@ -228169,6 +230672,12 @@ structs:
   - name: GetObjectKind
     offset: 16
     return_type: Client::Game::Object::ObjectKind
+    parameters:
+    - type: Client::Game::Character::Character*
+      name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
     parameters:
     - type: Client::Game::Character::Character*
       name: this
@@ -228474,6 +230983,12 @@ structs:
     parameters:
     - type: Client::Game::Character::Companion*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Character::Companion*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -228698,6 +231213,12 @@ structs:
     parameters:
     - type: Client::Game::Character::MJILivelyActor*
       name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
+    parameters:
+    - type: Client::Game::Character::MJILivelyActor*
+      name: this
   - name: GetIsTargetable
     offset: 32
     return_type: char
@@ -228919,6 +231440,12 @@ structs:
   - name: GetObjectKind
     offset: 16
     return_type: Client::Game::Object::ObjectKind
+    parameters:
+    - type: Client::Game::Character::Ornament*
+      name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
     parameters:
     - type: Client::Game::Character::Ornament*
       name: this
@@ -229149,6 +231676,12 @@ structs:
   - name: GetObjectKind
     offset: 16
     return_type: Client::Game::Object::ObjectKind
+    parameters:
+    - type: Client::Game::Character::BattleChara*
+      name: this
+  - name: GetObjectType
+    offset: 24
+    return_type: Client::Game::Object::ObjectType
     parameters:
     - type: Client::Game::Character::BattleChara*
       name: this
@@ -230093,7 +232626,7 @@ structs:
   - type: byte
     name: SeenCutscenes
     offset: 106731
-    size: 179
+    size: 180
     is_string: False
   - type: byte
     name: UnlockedTripleTriadCards
