@@ -56,7 +56,7 @@ public unsafe partial struct AtkValue {
     public AtkValue(AtkValue* other) => CtorCopy(other);
 
     [MemberFunction("E8 ?? ?? ?? ?? EB ?? 83 CB ?? C7 45")]
-    public partial AtkValue* CtorCopy(AtkValue* other);
+    public partial AtkValue* CtorCopy(AtkValue* other); // TODO: rename to Ctor_Copy
 
     [MemberFunction("E8 ?? ?? ?? ?? 83 FF FE")]
     public partial void Dtor();
@@ -107,7 +107,7 @@ public unsafe partial struct AtkValue {
     [MemberFunction("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? E8 ?? ?? ?? ?? 8B 8E")]
     public partial bool CopyVectorValue(uint index, AtkValue* outValue);
 
-    [MemberFunction("40 56 41 56 41 57 48 83 EC ?? 4C 8B 71")]
+    [MemberFunction("E8 ?? ?? ?? ?? 4D 39 B7")]
     private partial void ReleaseManagedMemoryInternal();
 
     // The game probably uses a macro for this, because it always

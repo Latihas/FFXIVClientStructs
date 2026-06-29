@@ -1,143 +1,193 @@
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection.PortableExecutable;
-using FFXIVClientStructs.Interop.Generated;
+using System.Text;
+using FFXIVClientStructs.ResolverTester;
 using InteropGenerator.Runtime;
+using YamlDotNet.Serialization.NamingConventions;
 
-var gamePath = args.Length > 0 ? args[0] : @"E:\Program Files (x86)\上海数龙科技有限公司\clients\7.51\ffxiv_dx11.exe";
+var gamePath = args.Length > 0 ? args[0] : @"D:\FFXIV\game\ffxiv_dx11.exe";
 
-using var reader = new PEReader(File.OpenRead(gamePath));
-var textHeader = reader.PEHeaders.SectionHeaders[0];
+using PEReader reader = new PEReader(File.OpenRead(gamePath));
+SectionHeader textHeader = reader.PEHeaders.SectionHeaders[0];
 
-var relocateFile = new Span<byte>(new byte[reader.PEHeaders.PEHeader!.SizeOfImage]);
+Span<byte> relocFile = new Span<byte>(new byte[reader.PEHeaders.PEHeader!.SizeOfImage]);
 
-reader.GetSectionData(textHeader.Name).GetContent().CopyTo(relocateFile.Slice(textHeader.VirtualAddress, textHeader.VirtualSize));
+reader.GetSectionData(textHeader.Name).GetContent().CopyTo(relocFile.Slice(textHeader.VirtualAddress, textHeader.VirtualSize));
 unsafe {
-    fixed (byte* bytes = relocateFile) {
+    fixed (byte* bytes = relocFile) {
 
         Resolver.GetInstance.Setup(new IntPtr(bytes),
-            relocateFile.Length,
+            relocFile.Length,
             textHeader.VirtualAddress,
             textHeader.VirtualSize);
 
         var watch = new Stopwatch();
         watch.Start();
-        Addresses.Register();
-
-        var addresses = Resolver.GetInstance.Addresses.ToList();
-        var matchResults = new ConcurrentDictionary<Address, List<nint>>();
-
-        var textSectionOffset = textHeader.VirtualAddress;
-        var textSectionSize = textHeader.VirtualSize;
-        var bytesPtr = (nint)bytes;
-
-        Parallel.ForEach(addresses,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            address => {
-                var pattern = ParseSignature(address.String);
-                var matches = new List<nint>();
-
-                if (pattern.Length == 0) {
-                    matchResults[address] = matches;
-                    return;
-                }
-
-                var localBytes = (byte*)bytesPtr;
-                var searchStart = localBytes + textSectionOffset;
-                var searchEnd = searchStart + textSectionSize - pattern.Length;
-
-                var firstNonWildcardIndex = -1;
-                byte firstNonWildcardByte = 0;
-                for (var i = 0; i < pattern.Length; i++) {
-                    if (!pattern[i].isWildcard) {
-                        firstNonWildcardIndex = i;
-                        firstNonWildcardByte = pattern[i].value;
-                        break;
-                    }
-                }
-
-                if (firstNonWildcardIndex == -1) {
-                    for (var current = searchStart; current <= searchEnd; current++) {
-                        if (MatchesPatternOptimized(current, pattern))
-                            matches.Add((nint)(current - localBytes));
-                    }
-                } else {
-                    for (var current = searchStart; current <= searchEnd; current++) {
-                        if (current[firstNonWildcardIndex] == firstNonWildcardByte) {
-                            if (MatchesPatternOptimized(current, pattern))
-                                matches.Add((nint)(current - localBytes));
-                        }
-                    }
-                }
-
-                matchResults[address] = matches;
-            });
-
+        FFXIVClientStructs.Interop.Generated.Addresses.Register();
+        Resolver.GetInstance.Resolve();
         watch.Stop();
 
-        var totalSigCount = addresses.Count;
-        var resolvedUnique = matchResults.Count(kvp => kvp.Value.Count == 1);
-        var ambiguousCount = matchResults.Count(kvp => kvp.Value.Count > 1);
-        var failedCount = matchResults.Count(kvp => kvp.Value.Count == 0);
+        foreach (var addr in Resolver.GetInstance.Addresses.Where(addr => addr.Value != 0))
+            addr.Value = addr.Value - new IntPtr(bytes);
+        //Console.WriteLine($"Resolved in {watch.ElapsedMilliseconds}ms");
 
-        Console.WriteLine("\n=== 扫描结果统计 ===");
-        Console.WriteLine($"总计: {totalSigCount} 个特征码");
-        Console.WriteLine($"成功 (唯一匹配): {resolvedUnique} 个 ({(double)resolvedUnique / totalSigCount * 100:F1}%)");
-        Console.WriteLine($"多结果 (需修复): {ambiguousCount} 个 ({(double)ambiguousCount / totalSigCount * 100:F1}%)");
-        Console.WriteLine($"失败 (未匹配): {failedCount} 个 ({(double)failedCount / totalSigCount * 100:F1}%)");
-        Console.WriteLine($"耗时: {watch.ElapsedMilliseconds}ms");
+        var totalSigCount = Resolver.GetInstance.Addresses.Count;
+        var resolvedCount = Resolver.GetInstance.Addresses.Count(sig => sig.Value != 0);
+        Console.WriteLine($"Resolved count: {resolvedCount} ({((float)resolvedCount / totalSigCount) * 100}%)");
 
-        if (failedCount > 0) {
-            Console.WriteLine("\n=== 失败的特征码 ===");
-            foreach (var kvp in matchResults.Where(kvp => kvp.Value.Count == 0)) {
-                Console.WriteLine($"[FAIL] {kvp.Key.Name}: {kvp.Key.String}");
-            }
-        }
+        Console.WriteLine("\n=== Broken Signatures ===");
+        var unresolvedSigs = Resolver.GetInstance.Addresses.Where(sig => sig.Value == 0);
+        foreach (var sig in unresolvedSigs)
+            Console.WriteLine($"[FAIL] {sig.Name}: {sig.String}");
 
-        if (ambiguousCount > 0) {
-            Console.WriteLine("\n=== 多结果的特征码 ===");
-            foreach (var kvp in matchResults.Where(kvp => kvp.Value.Count > 1)) {
-                var preview = string.Join(", ", kvp.Value.Take(5).Select(a => $"0x{a:X}"));
-                var more = kvp.Value.Count > 5 ? $"... 等 {kvp.Value.Count} 处" : "";
-                Console.WriteLine($"[AMB] {kvp.Key.Name}: {kvp.Key.String} -> {preview} {more}".Trim());
-            }
-        }
+        foreach (Address address in Resolver.GetInstance.Addresses)
+            Console.WriteLine($"{address.Name} {address.Value:X}");
     }
 }
 
-return;
+using StreamReader dataReader = new StreamReader("ida/data.yml");
 
-static (byte value, bool isWildcard)[] ParseSignature(string signature) {
-    var parts = signature.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-    var lastNonWildcard = -1;
-    for (var i = 0; i < parts.Length; i++) {
-        if (parts[i] != "??" && parts[i] != "**") {
-            lastNonWildcard = i;
+var deserializer = new YamlDotNet.Serialization.DeserializerBuilder().WithNamingConvention(UnderscoredNamingConvention.Instance).Build();
+var data = deserializer.Deserialize<Data>(dataReader);
+
+int havokSigs = 0;
+int notFoundSigs = 0;
+int matchedSigs = 0;
+int failedSigs = 0;
+
+List<string> failedOutputs = [];
+List<string> notfoundOutputs = [];
+
+foreach (Address addr in Resolver.GetInstance.Addresses) {
+    // havok names in data.yml mangled
+    if (addr.Name.StartsWith("FFXIVClientStructs.Havok")) {
+        havokSigs += 1;
+        continue;
+    }
+    ReadOnlySpan<char> nameWithoutPrefix = addr.Name.Replace(".", "::").AsSpan(27);
+    int index = nameWithoutPrefix.LastIndexOf(':');
+    var className = nameWithoutPrefix[..(index - 1)].ToString();
+    var functionName = nameWithoutPrefix[(index + 1)..].ToString();
+
+    if (!data.Classes.TryGetValue(className, out Class? theClass) || theClass == null) {
+        notfoundOutputs.Add($"Class {className} not found in data.yml for signature {functionName} @ {addr.String}");
+        notFoundSigs += 1;
+        continue;
+    }
+
+    if (functionName == "Instance") {
+        if (theClass.Instances.Count == 0) {
+            notfoundOutputs.Add($"No instance found in data.yml for class {className} / signature {functionName} @ {addr.String}");
+            notFoundSigs += 1;
+            continue;
         }
+        if (!nint.TryParse(theClass.Instances[0].Ea.AsSpan(4), NumberStyles.HexNumber, null, out nint address)) {
+            notfoundOutputs.Add($"Unable to parse data.yml offset {theClass.Instances[0].Ea} for class {className} Instance");
+            notFoundSigs += 1;
+            continue;
+        }
+
+        if (addr.Value == 0) {
+            failedOutputs.Add($"{addr.Name} - {addr.String} failed to resolve, data.yml has {address:X}");
+            failedSigs += 1;
+            continue;
+        }
+
+        if (address != addr.Value) {
+            failedOutputs.Add($"{addr.Name} - {addr.String} resolved to {addr.Value:X}, data.yml has {address:X}");
+            failedSigs += 1;
+            continue;
+        }
+
+        matchedSigs += 1;
+        continue;
     }
 
-    if (lastNonWildcard == -1) return [];
+    if (functionName == "StaticVirtualTable") {
+        if (theClass.Vtbls.Count == 0) {
+            notfoundOutputs.Add($"No vtbl found in data.yml for class {className} / signature {functionName} @ {addr.String}");
+            notFoundSigs += 1;
+            continue;
+        }
 
-    var pattern = new List<(byte value, bool isWildcard)>();
-    for (var i = 0; i <= lastNonWildcard; i++) {
-        var part = parts[i];
-        if (part is "??" or "**")
-            pattern.Add((0, true));
-        else if (byte.TryParse(part, NumberStyles.HexNumber, null, out var value))
-            pattern.Add((value, false));
+        if (!nint.TryParse(theClass.Vtbls[0].Ea.AsSpan(4), NumberStyles.HexNumber, null, out nint address)) {
+            notfoundOutputs.Add($"Unable to parse data.yml offset {theClass.Instances[0].Ea} for class {className} StaticVirtualTable");
+            notFoundSigs += 1;
+            continue;
+        }
+
+        if (addr.Value == 0) {
+            failedOutputs.Add($"{addr.Name} - {addr.String} failed to resolve, data.yml has {address:X}");
+            failedSigs += 1;
+            continue;
+        }
+
+        if (address != addr.Value) {
+            failedOutputs.Add($"{addr.Name} - {addr.String} resolved to {addr.Value:X}, data.yml has {address:X}");
+            failedSigs += 1;
+            continue;
+        }
+
+        matchedSigs += 1;
+        continue;
     }
 
-    return pattern.ToArray();
+    if (functionName.StartsWith("Ctor") || functionName.StartsWith("Dtor"))
+        functionName = char.ToLowerInvariant(functionName[0]) + functionName[1..]; // lowercase ctor/dtor
+
+    if (theClass.Funcs == null)
+        continue;
+
+    if (theClass.Funcs.Count == 0 || !theClass.Funcs.ContainsValue(functionName)) {
+        notfoundOutputs.Add($"Function {functionName} of class {className} not found in data.yml for signature {addr.String}");
+        notFoundSigs += 1;
+        continue;
+    }
+
+    var key = theClass.Funcs.FirstOrDefault(x => x.Value == functionName).Key!;
+
+    if (!nint.TryParse(key.AsSpan(4), NumberStyles.HexNumber, null, out nint dataAddress)) {
+        notfoundOutputs.Add($"Unable to parse data.yml offset {key} for class {className} function {functionName}");
+        notFoundSigs += 1;
+        continue;
+    }
+
+    if (addr.Value == 0) {
+        failedOutputs.Add($"{addr.Name} - {addr.String} failed to resolve, data.yml has {dataAddress:X}");
+        failedSigs += 1;
+        continue;
+    }
+
+    if (dataAddress != addr.Value) {
+        failedOutputs.Add($"{addr.Name} - {addr.String} resolved to {addr.Value:X}, data.yml has {dataAddress:X}");
+        failedSigs += 1;
+        continue;
+    }
+
+    matchedSigs += 1;
+
 }
 
-static unsafe bool MatchesPatternOptimized(byte* memory, (byte value, bool isWildcard)[] pattern) {
-    fixed (void* patternPtr = pattern) {
-        var patternData = ((byte value, bool isWildcard)*)patternPtr;
-        for (var i = 0; i < pattern.Length; i++) {
-            if (!patternData[i].isWildcard && memory[i] != patternData[i].value)
-                return false;
-        }
-    }
-    return true;
-}
+var sb = new StringBuilder();
+
+sb.AppendLine($"Total Sigs {Resolver.GetInstance.Addresses.Count}");
+sb.AppendLine($"Skipped Havok Sig Count {havokSigs}");
+sb.AppendLine($"Sigs Not Found in data.yml Count {notFoundSigs}");
+sb.AppendLine($"Sigs Matching data.yml Count {matchedSigs}");
+sb.AppendLine($"Sigs Not Matching data.yml Count {failedSigs}");
+
+sb.AppendLine();
+
+sb.AppendLine("Failed Matches");
+foreach (string line in failedOutputs)
+    sb.AppendLine(line);
+
+sb.AppendLine();
+
+sb.AppendLine("Not Found in data.yml");
+foreach (string line in notfoundOutputs)
+    sb.AppendLine(line);
+
+Console.WriteLine(sb.ToString());
+File.WriteAllText("ida/data-missmatch2.txt", sb.ToString());

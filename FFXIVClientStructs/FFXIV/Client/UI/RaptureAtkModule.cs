@@ -81,7 +81,7 @@ public unsafe partial struct RaptureAtkModule {
     [FieldOffset(0x2A938 - 0x10)] internal nint ShellCommands; // only 1 function to open links?
 
     [MemberFunction("48 89 5C 24 ?? 57 48 83 EC ?? 0F BF 81 ?? ?? ?? ?? 8B FA")]
-    public partial bool ChangeUiMode(uint uiMode);
+    public partial bool ChangeUiMode(uint uiMode); // TODO: fix capitalization -> ChangeUIMode
 
     [MemberFunction("E8 ?? ?? ?? ?? 0F BE 4E 30")]
     public partial bool IncRefNumberArrayData(int index);
@@ -151,6 +151,7 @@ public unsafe partial struct RaptureAtkModule {
         [FieldOffset(0x24)] public uint ClassJobId;
         [FieldOffset(0x2C)] public uint Icon;
         [FieldOffset(0x30)] public Utf8String Name;
+        [FieldOffset(0x98)] public byte* NameOverride;
         [FieldOffset(0xA0)] public Utf8String FcName;
         [FieldOffset(0x108)] public Utf8String Title;
         [FieldOffset(0x170)] public Utf8String DisplayTitle;

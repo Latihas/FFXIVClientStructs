@@ -33,6 +33,9 @@ public unsafe partial struct PacketDispatcher {
         GameObjectId targetId,
         bool isRecorded);
 
+    [MemberFunction("E8 ?? ?? ?? ?? B0 ?? 48 8B 5C 24 ?? 48 8B 74 24 ?? 48 83 C4 ?? 5F C3 8B 4F ?? 48 8B D3 E8 ?? ?? ?? ?? B0 ?? 48 8B 5C 24 ?? 48 8B 74 24 ?? 48 83 C4 ?? 5F C3 48 8B CB E8 ?? ?? ?? ?? B0 ?? 48 8B 5C 24 ?? 48 8B 74 24 ?? 48 83 C4 ?? 5F C3 8B 4F ?? 41 B0")]
+    public static partial void HandlePrepareZoningPacket(PrepareZoningPacket* packet, byte a2);
+
     [MemberFunction("4C 8B DC 55 56 41 56 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 41 0F B6 F0")]
     public static partial void HandleZoneInitPacket(uint entityId, ZoneInitPacket* packet, byte a3); // a3 has something to do with ContentsReplay
 
@@ -86,6 +89,9 @@ public unsafe partial struct PacketDispatcher {
 
     [MemberFunction("E8 ?? ?? ?? ?? EB 10 48 8B 0D")]
     public static partial void SendEventCompletePacket(EventId eventId, short scene, byte a3, uint* payload, byte payloadSize, void* a6);
+
+    [MemberFunction("40 53 57 48 81 EC ?? ?? ?? ?? 48 8B FA 8B")]
+    public static partial void HandleActorCastPacket(uint entityId, ActorCastPacket* packet);
 
     [VirtualFunction(1)]
     public partial void OnReceivePacket(uint targetId, nint packet);
