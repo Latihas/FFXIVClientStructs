@@ -29,9 +29,11 @@ public unsafe partial struct EventHandler {
     [FieldOffset(0xA0)] private ExcelSheet* UnkExcelSheet1;
     [FieldOffset(0xA8)] private ExcelSheetWaiter* UnkExcelSheetWaiter2;
     [FieldOffset(0xB0)] private ExcelSheet* UnkExcelSheet2;
-    [FieldOffset(0xB8)] private ExcelSheetWaiter* UnkExcelSheetWaiter3;
-    [FieldOffset(0xC0)] private ExcelSheet* UnkExcelSheet3;
-    [FieldOffset(0xC8)] private Utf8String UnkSheetName; // sheet set to UnkExcelSheet3, for FormatStringCallback?
+    [FieldOffset(0xB8)] public ExcelSheetWaiter* CustomDefineSheetWaiter;
+    [FieldOffset(0xC0)] public ExcelSheet* CustomDefineSheet;
+    [FieldOffset(0xC8)] public Utf8String CustomDefineSheetName; // for example: warp/WarpInnGridania
+
+    [FieldOffset(0x148)] public uint CustomDefineSheetRowCount;
 
     [FieldOffset(0x158)] private ExcelSheetWaiter* UnkExcelSheetWaiter4;
     [FieldOffset(0x160)] private ExcelSheet* UnkExcelSheet4; // TripleTriadCard, XBMBattleDetailAction
@@ -84,6 +86,14 @@ public unsafe partial struct EventHandler {
 
     [VirtualFunction(209)]
     public partial uint GetNameplateIconForObject(GameObject* gameObject);
+
+    /// <summary> If the GameObject from the EventHandler's perspective should be active. For example, this can control whether GimmickRects are active. </summary>
+    [VirtualFunction(213)]
+    public partial bool IsActive(GameObject* gameObject);
+
+    /// <summary> Sets the TargetableStatus update flag for every GameObject this EventHandler owns. </summary>
+    [VirtualFunction(217)]
+    public partial void UpdateTargetableStatus();
 
     /// <summary>Changes the currently playing timelines based on the difference between oldSharedTimelineState and newSharedTimelineState.</summary>
     /// <param name="gameObject">The game object to update.</param>
