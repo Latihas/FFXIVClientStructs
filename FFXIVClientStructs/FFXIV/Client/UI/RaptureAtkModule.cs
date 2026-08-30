@@ -70,7 +70,7 @@ public unsafe partial struct RaptureAtkModule {
 
     [FieldOffset(0x2A900 - 0x10)] internal ExcelSheet* AddonParamSheet;
     [FieldOffset(0x2A908 - 0x10)] public AtkTexture CharaViewDefaultBackgroundTexture; // "ui/common/CharacterBg.tex" (or _hr1 variant)
-
+    [FieldOffset(0x2A920 - 0x10)] public CreditMode CreditMode;
     [FieldOffset(0x2A924 - 0x10)] public uint LoginSummonCompanionId;
     [FieldOffset(0x2A928 - 0x10)] public float LoginSummonCompanionCountdown;
     /// <remarks> Only for Region 5 </remarks>
